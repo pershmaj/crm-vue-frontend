@@ -26,7 +26,7 @@
                     // id: { label: "id", type:"objectid",},
                     //tableHidden   ---   hide in list
                     //cuHidden ---    hide in create/update forms
-                    origin: { label: "Идентификатор контакта", type: 'string'},
+                    origin: { label: "Идентификатор контакта", type: 'string', cuHidden: true,},
                     surname: {label: "Фамилия", type: 'string'},
                     name: { label: "Имя", type: 'string',},
                     patro: {label: "Отчество", type: 'string'},
@@ -59,22 +59,22 @@
             },
             handleSubmit(status, closeDialog){
                 this.form.datetime = new Date()
-                // if(status === 0){ //create action
-                    http.post('/contacts/', {...this.form}).then((result) => {
-                        if(result.status === 201 || result.status === 200){
-                            this.dataInit(), closeDialog()
-                        }
-                    })
-                // } else if(status === 1){ // update action
-                //     http.put(this.entity+this.form.id+'/', {...this.form}).then((result) => {
-                //         if(result.status === 200){
-                //             this.dataInit(), closeDialog()
-                //         }
-                //     })
-                // }
+                if(status === 0){//create action
+                    this.form.origin = this.getRandom()
+                }
+                http.post('/contacts/', {...this.form}).then((result) => {
+                    if(result.status === 201 || result.status === 200){
+                        this.dataInit(), closeDialog()
+                    }
+                })
             },
             handleRowDblclick(row, index){
               console.log(row, index)
+            },
+            getRandom(){
+                var n = Math.floor(Math.random() * 11)
+                var k = Math.floor(Math.random() * 1000000)
+                return  String.fromCharCode(n) + k
             },
             dataInit(){
                 http.get('/contacts-original/').then(({data}) =>{

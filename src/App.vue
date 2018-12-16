@@ -1,14 +1,12 @@
 <template>
   <div id="app">
     <el-menu
-            :default-active="activeIndex2"
             class="el-menu"
             mode="horizontal"
-            @select="handleSelect"
             background-color="#545c64"
             text-color="#fff"
             active-text-color="#ffd04b"
-            router="true">
+            :router="true">
         <el-container class="">
             <el-menu-item index="/">Домой</el-menu-item>
             <el-submenu index="/admin/">

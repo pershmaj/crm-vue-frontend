@@ -77,7 +77,7 @@
                 console.log(row, index)
             },
             dataInit(){
-                http.post('/contacts/').then(({data}) =>{
+                http.get('/contacts/').then(({data}) =>{
                     this.data = data
                     http.get('/types-add/').then(({data}) => {
                         this.fields.type_id.options = []
