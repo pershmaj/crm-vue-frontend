@@ -1,10 +1,37 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <el-menu
+            :default-active="activeIndex2"
+            class="el-menu"
+            mode="horizontal"
+            @select="handleSelect"
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+            router="true">
+        <el-container class="">
+            <el-menu-item index="/">Домой</el-menu-item>
+            <el-submenu index="/admin/">
+                <template slot="title">Административная часть</template>
+                <el-menu-item index="/admin/contact/">Управление контактами</el-menu-item>
+                <el-menu-item index="/admin/all-contact/">Управление всеми контактами</el-menu-item>
+                <el-menu-item index="/admin/task/">Управление задачами</el-menu-item>
+                <el-menu-item index="/admin/event/">Управление мероприятиями</el-menu-item>
+                <el-menu-item index="/admin/edu/">Управление учебными заведениями</el-menu-item>
+                <el-menu-item index="/admin/edu-type/">Управление типами учебных заведений</el-menu-item>
+                <el-menu-item index="/admin/type-add/">Управление типами добавления</el-menu-item>
+                <el-menu-item index="/admin/status/">Управление статусами</el-menu-item>
+                <el-menu-item index="/admin/status-type/">Управление типами статусов</el-menu-item>
+            </el-submenu>
+            <el-menu-item index="/sender/">Рассылки</el-menu-item>
+        </el-container>
+    </el-menu>
+      <div class="line"></div>
+    <el-main>
+      <router-view/>
+    </el-main>
+
+    <el-footer></el-footer>
   </div>
 </template>
 
