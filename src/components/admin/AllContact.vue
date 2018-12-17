@@ -59,7 +59,9 @@
             },
             handleSubmit(status, closeDialog){
                 this.form.datetime = new Date()
-                // if(status === 0){ //create action
+                if(status === 0){//create action
+                    this.form.origin = this.getRandom()
+                }
                 http.post('/contacts/', {...this.form}).then((result) => {
                     if(result.status === 201 || result.status === 200){
                         this.dataInit(), closeDialog()

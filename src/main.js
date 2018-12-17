@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './registerServiceWorker'
+import VueSession from 'vue-session'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/ru-RU'
@@ -10,6 +11,7 @@ import locale from 'element-ui/lib/locale/lang/ru-RU'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
+Vue.use(VueSession)
 Vue.use(ElementUI, {locale})
 // Vue.use(CRUD)
 Vue.use(VueAxios, axios)

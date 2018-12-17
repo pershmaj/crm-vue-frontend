@@ -12,6 +12,8 @@ import Contact from "@/components/admin/Contact";
 import Task from "@/components/admin/Task";
 import Sender from "@/components/sender/Sender";
 import AllContact from "@/components/admin/AllContact";
+import Login from "@/components/login/Login";
+import Logout from "@/components/login/Logout";
 
 Vue.use(Router)
 
@@ -23,6 +25,16 @@ export default new Router({
             path: '/',
             name: 'home',
             component: Home
+        },
+        {
+            path: '/login/',
+            name: 'login',
+            component: Login
+        },
+        {
+            path: '/logout/',
+            name: 'logout',
+            component: Logout
         },
         {
             path: '/admin/',
