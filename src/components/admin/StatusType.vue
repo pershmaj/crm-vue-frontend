@@ -1,6 +1,9 @@
 <template>
     <div id="edu-admin">
-        <crud :data="data" :fields="fields" :form="form"
+        <crud :data="this.$store.getters.statusTypes"
+              :fields="this.$store.getters.statusTypesFields"
+              :count="this.$store.getters.statusTypes.length"
+              :form="form"
               @create="handleCreate" @update="handleUpdate" @destroy="handleDestroy" @submit="handleSubmit"
         ></crud>
     </div>
@@ -17,17 +20,9 @@
         },
         data() {
             return {
-                entity: "/status-types/",
-                data: [],
+                ent: "statusType",
                 form: {},
-                fields: {
-                    // id: { label: "id", type:"objectid",},
-                    name: { label: "Название", type: 'String',},
-                },
             }
-        },
-        created(){
-            this.dataInit()
         },
         methods: {
             handleCreate() {},
@@ -35,26 +30,17 @@
                 this.form = { ...row}
             },
             handleDestroy(row, index) { //destroy action
-                http.delete(this.entity+row.id+'/').then((result) => {if(result.status === 204) this.data.splice(index, 1)})
+                this.$socket.emit('delete', {ent: this.ent, data: row._id})
             },
             handleSubmit(status, closeDialog){
                 if(status === 0){ //create action
-                    http.post(this.entity, {...this.form}).then((result) => {
-                        if(result.status === 201){ this.dataInit(), closeDialog() }
-                    })
-                } else if(status === 1){ // delete action
-                    http.put(this.entity+this.form.id+'/', {...this.form}).then((result) => {
-                        if(result.status === 200){
-                            this.dataInit(), closeDialog()
-                        }
-                    })
+                    this.$socket.emit('add', {ent: this.ent, data: this.form})
+                    closeDialog()
+                } else if(status === 1){ // update action
+                    this.$socket.emit('update', {ent: this.ent, data: this.form})
+                    closeDialog()
                 }
             },
-            dataInit(){
-                http.get(this.entity).then(({data}) =>{
-                    this.data = data
-                })
-            }
         }
     }
 </script>

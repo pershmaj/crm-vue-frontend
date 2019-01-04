@@ -11,7 +11,7 @@
                     v-show="this.$session.exists()"
             >
                 <el-menu-item index="/">Домой</el-menu-item>
-                <el-submenu index="/admin/">
+                <el-submenu index="/admin/" v-show="this.$session.get('nasyanika')">
                     <template slot="title">Административная часть</template>
                     <el-menu-item index="/admin/contact/">Управление контактами</el-menu-item>
                     <el-menu-item index="/admin/all-contact/">Управление всеми контактами</el-menu-item>
@@ -20,11 +20,11 @@
                     <el-menu-item index="/admin/edu/">Управление учебными заведениями</el-menu-item>
                     <el-menu-item index="/admin/edu-type/">Управление типами учебных заведений</el-menu-item>
                     <el-menu-item index="/admin/type-add/">Управление типами добавления</el-menu-item>
-                    <el-menu-item index="/admin/status/">Управление статусами</el-menu-item>
-                    <el-menu-item index="/admin/status-type/">Управление типами статусов</el-menu-item>
+                    <el-menu-item index="/admin/status-contact/">Управление статусами контактов</el-menu-item>
+                    <el-menu-item index="/admin/status-task/">Управление статусами задач</el-menu-item>
                 </el-submenu>
                 <el-menu-item index="/sender/">Рассылки</el-menu-item>
-                <el-menu-item index="/logout/">Выйти</el-menu-item>
+                <el-menu-item index="/logout/">Выйти ({{ username }}) </el-menu-item>
             </el-menu>
             <div class="line"></div>
         </el-header>
@@ -49,20 +49,52 @@
                 year: new Date().getFullYear()
             }
         },
+        computed: {
+            username(){
+                return this.$session.get('username')
+            }
+        },
         created() {
-            this.getAuth()
+            if(this.getAuth()){
+                this.$router.push('/')
+            }
+            let loading = this.$loading({
+                lock: true,
+                text: 'Загрузка данных',
+                // spinner: 'el-icon-loading',
+            })
+            let arEnt = ['eduType', 'edu', 'contact',  'statusContact', 'statusTask',
+                            'typeAdd', 'task', 'event', 'user']
+            this.$socket.emit('init', {ent: arEnt}) // загружаем данные
+            this.sockets.subscribe('inited', (data) => {
+                this.$store.dispatch('updateFields').then(() => loading.close())
+                this.sockets.unsubscribe('inited')
+            })
+
         },
         beforeUpdate() {
             this.getAuth()
+
         },
         methods: {
+            checkLogout() {
+                this.$confirm('Точно выйти?', 'Подтверждение', {
+                    confirmButtonText: 'Выйти',
+                    cancelButtonText: 'Отмена',
+                    type: 'warning'
+                }).then(() => {
+                    this.$router.push('/logout/')
+                })
+            },
             getAuth() {
                 if (!this.$session.exists()) {
                     console.log('need login')
                     this.$router.push('/login/')
+                    return false
                 } else if (this.$session.get('token')) {
                     console.log('have token')
                     http.defaults.headers.common['Authorization'] = "Token " + this.$session.get('token')
+                    return true
                 }
             }
         }

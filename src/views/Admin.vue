@@ -30,16 +30,6 @@
                 <router-link to="/admin/type-add/">Типы добавления</router-link>
             </el-col>
         </el-row>
-        <el-row :gutter="5">
-            <el-col>
-                <router-link to="/admin/status/">Статусы</router-link>
-            </el-col>
-        </el-row>
-        <el-row :gutter="5">
-            <el-col>
-                <router-link to="/admin/status-type/">Типы статусов</router-link>
-            </el-col>
-        </el-row>
 
 
 

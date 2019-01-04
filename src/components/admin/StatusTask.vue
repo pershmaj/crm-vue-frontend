@@ -1,10 +1,10 @@
 <template>
     <div id="edu-admin">
-        <crud :data="this.$store.getters.edus"
-              :fields="this.$store.getters.edusFields"
-              :count="this.$store.getters.edus.length"
-              :form="form" v-loading="false"
-        @create="handleCreate" @update="handleUpdate" @destroy="handleDestroy" @submit="handleSubmit"
+        <crud :data="this.$store.getters.statusesTask"
+              :fields="this.$store.getters.statusesTaskFields"
+              :count="this.$store.getters.statusesTask.length"
+              :form="form"
+              @create="handleCreate" @update="handleUpdate" @destroy="handleDestroy" @submit="handleSubmit"
         ></crud>
     </div>
 </template>
@@ -20,7 +20,7 @@
         },
         data() {
             return {
-                ent: "edu",
+                ent: "statusTask",
                 form: {},
             }
         },
@@ -36,7 +36,7 @@
                 if(status === 0){ //create action
                     this.$socket.emit('add', {ent: this.ent, data: this.form})
                     closeDialog()
-                } else if(status === 1){ // delete action
+                } else if(status === 1){ // update action
                     this.$socket.emit('update', {ent: this.ent, data: this.form})
                     closeDialog()
                 }

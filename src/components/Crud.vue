@@ -1,8 +1,16 @@
 <template>
     <div class="crud">
-        <div class="crud__ctrl" v-if="actions.includes('create')">
-            <el-button type="primary" @click="create" size="small" icon="el-icon-plus">Create</el-button>
-        </div>
+        <el-row>
+            <el-col :span="4">
+                <el-input  v-model="searchStr" @keyup.native="search" clearable placeholder="Поиск"></el-input>
+            </el-col>
+            <el-col :span="3" :offset="21">
+                <div class="crud__ctrl" v-if="actions.includes('create')">
+                    <el-button type="primary" @click="create" size="small" icon="el-icon-plus">Create</el-button>
+                </div>
+            </el-col>
+        </el-row>
+
         <el-table :data="data" stripe :border="border || undefined" :row-style="rowStyle || undefined" :highlight-current-row="highlightCurrentRow"
                   @expand="handleExpand" @row-click="handleRowClick" @row-dblclick="handleRowDblclick">
             <slot name="prepend"></slot>
@@ -50,12 +58,39 @@
                 </template>
             </el-table-column>
         </el-table>
+        <!---------------------------------------DETAIL VIEW---------------------------------------->
+        <el-dialog title="Детальное представление" :size="detail.size" :close-on-click-modal="false"
+                   :visible="detail.visible" :show-close="false" @open="handleOpen">
+            <el-row class="detail-row" v-for="(key, index) in Object.keys(labels)" :key="index" style="">
+                <el-col :span="6" :offset="3" v-html="labels[key]"></el-col>
+                <el-col :span="6" :offset="3" v-if="key in fields && fields[key].multiple">
+                    <div v-for="entItem in form[key]">
+                        {{ (fields[key].options.find(item => item.value === entItem) || '').label }}
+                    </div>
+                </el-col>
+                <el-col :span="6" :offset="3" v-else-if="key in fields && fields[key].options">{{ (fields[key].options.find(item => item.value === form[key]) || '').label }}</el-col>
+                <el-col :span="6" :offset="3" v-else >{{ form[key] }}</el-col>
+            </el-row>
+            <div slot="footer">
+                <el-button type="close" @click="closeDetail">Закрыть</el-button>
+            </div>
+        </el-dialog>
         <!--/////////////////////////////////////////////CREATE -----------------------------------UPDATE-->
         <el-dialog :title="dialog.title[dialog.status]" :size="dialog.size" :close-on-click-modal="false"
                    :visible="dialog.visible" :show-close="false" @open="handleOpen">
             <el-form class="crud__form" :class="{'crud__form--inline': inline}" ref="form" :model="form" :rules="computedRules" @keyup.native.13="submit">
                 <el-form-item v-for="(key, index) in Object.keys(labels)" :key="index" :label="labels[key]" v-show="!fields[key].cuHidden" :prop="key" :label-width="labelWidth">
                     <slot v-if="fields[key].slot" :name="fields[key].slot"></slot>
+                    <!-- селектор выбора контактов для создания / обновления задачи -->
+                    <!--<div v-else-if="fields[key].multiple && fields[key].ent === 'contact'">-->
+                        <!--<el-button @click="showContactPickerModal = true" >Выбрать контакты </el-button>-->
+                        <!--<el-dialog title="Outer Dialog" :visible.sync="showContactPickerModal" append-to-body >-->
+                            <!--<div slot="footer" class="dialog-footer">-->
+                                <!--<el-button type="primary" @click="showContactPickerModal = false">Close</el-button>-->
+                            <!--</div>-->
+                        <!--</el-dialog>-->
+                    <!--</div>-->
+
                     <el-select :disabled="fields[key].disabled" placeholder="" v-else-if="fields[key].multiple" multiple v-model="form[key]" style="width: 100%;" filterable>
                         <el-option v-for="(o, index) in fields[key].options" :key="index" :label="o.label" :value="o.value"
                                    :disabled="fields[key].unique && repeated(key, o.value, (updatingRow || '')[key])"/>
@@ -79,6 +114,17 @@
                 <el-button type="primary" @click="submit" :loading="loading">Отправить</el-button>
             </div>
         </el-dialog>
+        <div class="block">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-sizes="[10, 25, 50, 100]"
+                    :page-size="10"
+                    layout="sizes, prev, pager, next"
+                    :total="count">
+            </el-pagination>
+        </div>
     </div>
 </template>
 
@@ -86,36 +132,30 @@
     import TYPES from './fieldType'
     export default {
         props: {
-            // 表格数据
+            //
             data: { required: true, type: Array },
-            // 表单 v-model 对象
+            // данные в форму
             form: { required: true, type: Object },
-            // 表单字段
+            // данные для делатьльного представления
             fields: { required: true, type: Object },
-            // 表单验证
             rules: Object,
-
-            // 表格与表单的字段不一致时，传入作为表格的表头
+            //count of objects
+            count: 0,
             table: Object,
-            // 对话框 el-dialog 的大小值
             size: { default: 'large', type: String },
-            // 表单元素标签的尺寸
             labelWidth: { default: '100px', type: String },
-            // 表单的显示样式，如果为真，则是行内显示
             inline: { default: false, type: Boolean },
-            // 是否正在提交数据，请求网络
             loading: { default: false, type: Boolean },
-            // 操作
             actions: { default: () => ['create', 'destroy', 'update'], type: Array },
-            // 是否高亮显示当前行
             highlightCurrentRow: { default: false, type: Boolean },
-            // 表格行样式
             rowStyle: Function,
-            // 表格单元格是否带边框
-            border: { type: Boolean, default: true }
+            border: { type: Boolean, default: true },
+
         },
         data() {
             return {
+                showContactPickerModal: false,
+                currentPage: 0,
                 dialog: {
                     status: 0,
                     visible: false,
@@ -125,7 +165,13 @@
                     },
                     size: this.inline ? this.size : 'small'
                 },
+                detail: {
+                    status: 0,
+                    visible: false,
+                    size: this.inline ? this.size : 'small'
+                },
                 updatingRow: null,
+                searchStr: "",
                 TYPES
             }
         },
@@ -155,6 +201,10 @@
         },
         methods: {
             doNothing() {},
+            search() {
+                //todo: передать в компонент строку и вернуть результат поиска
+                this.$emit('search', this.searchStr)
+            },
             create() {
                 this.dialog.status = 0
                 this.showDialog()
@@ -183,6 +233,15 @@
                 this.dialog.visible = false
                 this.$emit('close')
             },
+            showDetail(){
+                console.log('crud show detail')
+                this.detail.visible = true
+                this.$emit('detailOpen')
+            },
+            closeDetail(){
+                this.detail.visible = false
+                this.$emit('detailClose')
+            },
             handleOpen() {
                 if (this.$refs.form) {
                     this.$refs.form.resetFields()
@@ -206,7 +265,7 @@
                 this.$emit('row-click', row, event, column)
             },
             handleRowDblclick(row, event) {
-                // this.showDialog()
+                this.showDetail()
                 this.$emit('row-dblclick', row, event)
             },
             handleNumberChange(key, event, length) {
@@ -215,12 +274,26 @@
                 this.$nextTick(() => {
                     this.form[key] = slicedText
                 })
-            }
+            },
+            handleSizeChange(size) {
+                console.log("size changed", size)
+                this.$emit('sizePerPageChanged', size)
+            },
+            handleCurrentChange(page) {
+                console.log('current changed', page)
+                this.$emit('currentPageChanged', page)
+
+            },
         }
     }
 </script>
 
 <style>
+    .detail-row {
+        padding-top: 20px;
+        font-size: 20px;
+        border-bottom: #eaeaea 1px solid;
+    }
     .crud__ctrl {
         margin: 8px 0;
     }

@@ -7,10 +7,22 @@ import VueSession from 'vue-session'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/ru-RU'
-// import CRUD from 'vue-element-crud's
+import VueSocketIO from 'vue-socket.io'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueFuse from 'vue-fuse'
+import AsyncComputed from 'vue-async-computed'
 
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection: 'http://crmback.na4u.ru',
+    vuex: {
+        store,
+        actionPrefix: 'socket_',
+    }
+}))
+Vue.use(AsyncComputed)
+Vue.use(VueFuse)
 Vue.use(VueSession)
 Vue.use(ElementUI, {locale})
 // Vue.use(CRUD)

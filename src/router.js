@@ -6,14 +6,15 @@ import Edu from "@/components/admin/Edu";
 import EduType from "@/components/admin/EduType";
 import Event from "@/components/admin/Event";
 import TypeAdd from "@/components/admin/TypeAdd";
-import Status from "@/components/admin/Status";
-import StatusType from "@/components/admin/StatusType";
 import Contact from "@/components/admin/Contact";
 import Task from "@/components/admin/Task";
 import Sender from "@/components/sender/Sender";
 import AllContact from "@/components/admin/AllContact";
 import Login from "@/components/login/Login";
 import Logout from "@/components/login/Logout";
+import StatusContact from "@/components/admin/StatusContact";
+import StatusTask from "@/components/admin/StatusTask";
+import TaskManager from "@/components/work-area/TaskManager";
 
 Vue.use(Router)
 
@@ -67,9 +68,9 @@ export default new Router({
             component: Edu
         },
         {
-            path: '/admin/status/',
-            name: 'status-admin',
-            component: Status
+            path: '/admin/status-contact/',
+            name: 'status-contact-admin',
+            component: StatusContact
         },
         {
             path: '/admin/edu-type/',
@@ -77,9 +78,9 @@ export default new Router({
             component: EduType
         },
         {
-            path: '/admin/status-type/',
-            name: 'status-type-admin',
-            component: StatusType
+            path: '/admin/status-task/',
+            name: 'status-task-admin',
+            component: StatusTask
         },
         {
             path: '/admin/event/',
@@ -90,6 +91,11 @@ export default new Router({
             path: '/admin/type-add/',
             name: 'type-add-admin',
             component: TypeAdd
+        },
+        {
+            path: '/work-area/task-manager/',
+            name: 'task-manager',
+            component: TaskManager
         },
 
     ]

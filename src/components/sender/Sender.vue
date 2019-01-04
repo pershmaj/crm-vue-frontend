@@ -14,10 +14,15 @@
             <el-table-column property="level" label="Класс" ></el-table-column>
             <el-table-column property="address" label="Адрес" ></el-table-column>
         </el-table>
-        <div style="margin-top: 20px">
-            <el-button @click="sendEmail">Добавить адреса</el-button>
-            <el-button @click="startCampaign">Отправить письма</el-button>
-        </div>
+        <el-row style="margin-top: 20px">
+            <el-col :span="2" :offset="9">Email</el-col>
+            <el-col :span="4" ><el-button v-show="!this.addressbookId" @click="sendEmail">Добавить адреса</el-button></el-col>
+            <el-col :span="4" ><el-button type="danger" v-show="this.addressbookId" @click="startCampaign">Отправить письма</el-button></el-col>
+        </el-row>
+        <!--<el-row style="margin-top: 20px">-->
+            <!--<el-button  @click="sendEmail">Добавить адреса</el-button>-->
+            <!--<el-button  @click="startCampaign">Отправить письма</el-button>-->
+        <!--</el-row>-->
     </div>
 </template>
 
@@ -33,6 +38,7 @@
                 forSend: [],
                 loading:true,
                 addressbookId: "",
+                readyForSend: false,
                 fields: {
                     surname: {label: "Фамилия", type: 'string'},
                     name: { label: "Имя", type: 'string',},
@@ -62,7 +68,8 @@
                         this.forSend.push({email: email, variables: {
                                 name: name + ' ' + surname,
                                 // for more variables
-                            }})
+                            }
+                        })
                     })
                     http.post('/send-emails/', this.forSend).then((result) => {
                         this.addressbookId = result.data
