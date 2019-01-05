@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import './plugins/vuetify'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -12,7 +13,10 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueFuse from 'vue-fuse'
 import AsyncComputed from 'vue-async-computed'
-
+// import Vuetify from 'vuetify'
+// import 'vuetify/dist/vuetify.min.css'
+//
+// Vue.use(Vuetify)
 Vue.use(new VueSocketIO({
     debug: true,
     connection: 'http://crmback.na4u.ru',

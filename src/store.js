@@ -124,7 +124,7 @@ export default new Vuex.Store({
                                 Fields[ent][ref].options.push({value: row._id, label: row.username})
                             }
                             else if (ref === 'contact_ids') {
-                                Fields[ent][ref].options.push({value: row._id,
+                                Fields[ent][ref].options.push({value: row.origin,
                                     label: row.surname + " " + row.name + " " + row.patro})
                             }
                             else {

@@ -81,15 +81,15 @@
             <el-form class="crud__form" :class="{'crud__form--inline': inline}" ref="form" :model="form" :rules="computedRules" @keyup.native.13="submit">
                 <el-form-item v-for="(key, index) in Object.keys(labels)" :key="index" :label="labels[key]" v-show="!fields[key].cuHidden" :prop="key" :label-width="labelWidth">
                     <slot v-if="fields[key].slot" :name="fields[key].slot"></slot>
-                    <!-- селектор выбора контактов для создания / обновления задачи -->
-                    <!--<div v-else-if="fields[key].multiple && fields[key].ent === 'contact'">-->
-                        <!--<el-button @click="showContactPickerModal = true" >Выбрать контакты </el-button>-->
+                     <!--селектор выбора контактов для создания / обновления задачи-->
+                    <div v-else-if="fields[key].multiple && fields[key].ent === 'contact'">
+                        <contact-picker-table @selectionChanged="handleContactPickerSelectionChanged" ></contact-picker-table>
                         <!--<el-dialog title="Outer Dialog" :visible.sync="showContactPickerModal" append-to-body >-->
                             <!--<div slot="footer" class="dialog-footer">-->
                                 <!--<el-button type="primary" @click="showContactPickerModal = false">Close</el-button>-->
                             <!--</div>-->
                         <!--</el-dialog>-->
-                    <!--</div>-->
+                    </div>
 
                     <el-select :disabled="fields[key].disabled" placeholder="" v-else-if="fields[key].multiple" multiple v-model="form[key]" style="width: 100%;" filterable>
                         <el-option v-for="(o, index) in fields[key].options" :key="index" :label="o.label" :value="o.value"
@@ -130,7 +130,9 @@
 
 <script>
     import TYPES from './fieldType'
+    import ContactPickerTable from "@/components/admin/ContactPickerTable";
     export default {
+        components: {TestContactPickerTable, ContactPickerTable},
         props: {
             //
             data: { required: true, type: Array },
@@ -171,6 +173,7 @@
                     size: this.inline ? this.size : 'small'
                 },
                 updatingRow: null,
+                contactPickerSelected:[],
                 searchStr: "",
                 TYPES
             }
@@ -212,8 +215,9 @@
             },
             update(row, index) {
                 this.dialog.status = 1
-                this.updatingRow = row
+                this.updatingRow = row //todo: сюда поставить список контактов
                 this.showDialog()
+                console.log(this.updatingRow)
                 this.$emit('update', row, index)
             },
             destroy(row, index) {
@@ -276,14 +280,17 @@
                 })
             },
             handleSizeChange(size) {
-                console.log("size changed", size)
                 this.$emit('sizePerPageChanged', size)
             },
             handleCurrentChange(page) {
-                console.log('current changed', page)
                 this.$emit('currentPageChanged', page)
 
             },
+            handleContactPickerSelectionChanged(selected){
+                let temp = []
+                selected.forEach(({origin}) => { temp.push(origin) })
+                this.form.contact_ids = temp
+            }
         }
     }
 </script>

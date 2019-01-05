@@ -1,6 +1,6 @@
 <template>
     <div id="sender">
-        <el-table v-loading="loading" ref="multipleTable" :data="data" style="width: 100%"
+        <el-table v-loading="false" ref="multipleTable" :data="data" style="width: 100%"
             @select-all="handleSelectAll" @selection-change="handleSelectionChanged"   >
             <el-table-column
                     type="selection"
