@@ -22,6 +22,7 @@
           <el-menu-item index="/admin/type-add/">Управление типами добавления</el-menu-item>
           <el-menu-item index="/admin/status-contact/">Управление статусами контактов</el-menu-item>
           <el-menu-item index="/admin/status-task/">Управление статусами задач</el-menu-item>
+          <el-menu-item index="/admin/status-comment/">Управление статусами комментариев</el-menu-item>
         </el-submenu>
         <el-menu-item index="/sender/">Рассылки</el-menu-item>
         <el-menu-item index="/logout/">Выйти ({{ username }}) </el-menu-item>
@@ -63,7 +64,7 @@
                 // spinner: 'el-icon-loading',
             })
             let arEnt = ['eduType', 'edu', 'contact',  'statusContact', 'statusTask',
-                'typeAdd', 'task', 'event', 'user']
+                'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment']
             this.$socket.emit('init', {ent: arEnt}) // загружаем данные
             this.sockets.subscribe('inited', (data) => {
                 this.$store.dispatch('updateFields').then(() => loading.close())
@@ -100,9 +101,10 @@
 
 <style>
   #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    /*font-family: 'Avenir', Helvetica, Arial, sans-serif;*/
+    font-family: 'PT Sans Caption', sans-serif;
+    /*-webkit-font-smoothing: antialiased;*/
+    /*-moz-osx-font-smoothing: grayscale;*/
     text-align: center;
     color: #2c3e50;
   }

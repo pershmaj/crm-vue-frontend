@@ -132,7 +132,7 @@
     import TYPES from './fieldType'
     import ContactPickerTable from "@/components/admin/ContactPickerTable";
     export default {
-        components: {TestContactPickerTable, ContactPickerTable},
+        components: {ContactPickerTable},
         props: {
             //
             data: { required: true, type: Array },
@@ -269,7 +269,7 @@
                 this.$emit('row-click', row, event, column)
             },
             handleRowDblclick(row, event) {
-                this.showDetail()
+                // this.showDetail()
                 this.$emit('row-dblclick', row, event)
             },
             handleNumberChange(key, event, length) {

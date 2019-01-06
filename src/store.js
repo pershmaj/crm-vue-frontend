@@ -41,6 +41,14 @@ export default new Vuex.Store({
         user: {
             user: [],
             fields: {},
+        },
+        statusComment: {
+            statusComment: [],
+            fields: Fields.statusComment
+        },
+        comment: {
+            comment: [],
+            fields: {},
         }
     },
     getters: {
@@ -71,6 +79,38 @@ export default new Vuex.Store({
         eventsFields: state => state.event.fields,
         typeAdds: state => state.typeAdd.typeAdd,
         typeAddsFields: state => state.typeAdd.fields,
+        statusesComment: state => state.statusComment.statusComment,
+        statusesCommentFields: state => state.statusComment.fields,
+        getCommentsByOrigin: ({comment}) => {
+            return origin => {
+                let temp = []
+                comment.comment.forEach((item) => {
+                    if(item.contact_ids === origin) temp.push(item)
+                })
+                return temp
+            }
+        },
+        getTaskById: ({task}) => {
+            return id => {
+                return task.task.find((item) => {
+                    return item._id === id
+                })
+            }
+        },
+        getContactByOrigin: ({contact}) => {
+            return origin => {
+                return contact.contact.reverse().find((item) => {
+                    return item.origin === origin
+                })
+            }
+        },
+        getUserById: ({user}) => {
+            return id => {
+                return user.user.find((item) => {
+                    return item._id === id
+                })
+            }
+        }
     },
     mutations: {
         INIT: (state, data) => {

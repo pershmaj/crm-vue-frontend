@@ -98,8 +98,9 @@
                 closeDialog()
             },
             handleRowDblclick(row, index) {
-                this.form = {...row}
+                // this.form = {...row}
                 console.log(row, index)
+                this.$router.push({name: 'contact-admin-detail', params: { contactId: row.origin }})
             },
             getRandom() {
                 var n = Math.floor(Math.random() * 11)

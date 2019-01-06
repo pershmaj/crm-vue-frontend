@@ -57,7 +57,18 @@ var Fields = {
         status_id: { label: 'Статус', type: 'objectid', options: [], ent: 'statusTask'},
         user_id: { label: 'Исполнители', type: 'objectid', options: [], multiple:true, ent: 'user' },
         contact_ids: { label: 'Контакты', type: 'objectid', options: [], multiple:true, ent: 'contact' },
-    }
+    },
+    statusComment: {
+        name: { label: "Название", type: 'String',},
+    },
+    comment: {
+        contact_ids: { label: 'Контакт', type: 'objectid', options: [], ent: 'contact' },
+        task_id: { label: "Задача", type: 'objectid', options: [], ent: 'task' ,},
+        user_id: { label: 'Исполнитель', type: 'objectid', options: [], ent: 'user' },
+        message: { label: "Комментарий", type: 'string',},
+        status_id: { label: "Статус", type: 'objectid', options: [], ent: 'statusComment' },
+        datetime: { label: "Дата добавления", type: 'datetime'},
+    },
 
 
 }

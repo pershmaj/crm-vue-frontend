@@ -66,7 +66,7 @@
 <script>
     // @selectionChanged returns selected contacts as array
     export default {
-        name: "TestContactPickerTable",
+        name: "ContactPickerTable",
         computed: {
             items() {
                 return this.$store.getters.originalContacts

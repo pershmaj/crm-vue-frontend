@@ -15,6 +15,8 @@ import Logout from "@/components/login/Logout";
 import StatusContact from "@/components/admin/StatusContact";
 import StatusTask from "@/components/admin/StatusTask";
 import TaskManager from "@/components/work-area/TaskManager";
+import ContactCard from "@/components/work-area/ContactCard";
+import StatusComment from "@/components/admin/StatusComment";
 
 Vue.use(Router)
 
@@ -51,6 +53,16 @@ export default new Router({
             path: '/admin/contact/',
             name: 'contact-admin',
             component: Contact
+        },
+        {
+            path: '/admin/status-comment/',
+            name: 'status-comment-admin',
+            component: StatusComment
+        },
+        {
+            path: '/admin/contact/:contactId',
+            name: 'contact-admin-detail',
+            component: ContactCard
         },
         {
             path: '/admin/all-contact/',
