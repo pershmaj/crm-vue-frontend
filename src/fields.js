@@ -59,7 +59,7 @@ var Fields = {
         contact_ids: { label: 'Контакты', type: 'objectid', options: [], multiple:true, ent: 'contact' },
     },
     statusComment: {
-        name: { label: "Название", type: 'String',},
+        name: { label: "Название", type: 'string',},
     },
     comment: {
         contact_ids: { label: 'Контакт', type: 'objectid', options: [], ent: 'contact' },
@@ -69,6 +69,10 @@ var Fields = {
         status_id: { label: "Статус", type: 'objectid', options: [], ent: 'statusComment' },
         datetime: { label: "Дата добавления", type: 'datetime'},
     },
+    mailTemplate: {
+        name: { label: "Название", type: 'string',},
+        template: { label: "Код шаблона", type: 'text'}
+    }
 
 
 }

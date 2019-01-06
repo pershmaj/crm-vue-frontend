@@ -54,6 +54,7 @@
                     <td class="text-xs-center">{{ props.item.surname }}</td>
                     <td class="text-xs-center">{{ props.item.name }}</td>
                     <td class="text-xs-center">{{ props.item.patro }}</td>
+                    <td class="text-xs-center">{{ props.item.email }}</td>
                     <td class="text-xs-center">{{ props.item.phone }}</td>
                     <td class="text-xs-center">{{ props.item.birthday }}</td>
                 </tr>
@@ -82,6 +83,7 @@
                     {text: 'Фамилия', align: 'center', value: 'surname'},
                     {text: 'Имя', align: 'center', value: 'name'},
                     {text: 'Отчество', align: 'center', value: 'patro'},
+                    {text: 'Почта', align: 'center', value: 'email'},
                     {text: 'Телефон', align: 'center', value: 'phone'},
                     {text: 'Дата рождения', align: 'center', value: 'birthday'},
                 ],
@@ -96,7 +98,6 @@
         },
         methods: {
             toggleAll() {
-                console.log('clicked')
                 if (this.selected.length) this.selected = []
                 else this.selected = this.$store.getters.originalContacts.slice()
             },

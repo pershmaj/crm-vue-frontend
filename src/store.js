@@ -49,7 +49,11 @@ export default new Vuex.Store({
         comment: {
             comment: [],
             fields: {},
-        }
+        },
+        mailTemplate: {
+            mailTemplate: [],
+            fields: Fields.mailTemplate,
+        },
     },
     getters: {
         originalContacts: ({contact}) => {
@@ -81,6 +85,8 @@ export default new Vuex.Store({
         typeAddsFields: state => state.typeAdd.fields,
         statusesComment: state => state.statusComment.statusComment,
         statusesCommentFields: state => state.statusComment.fields,
+        mailTemplates: state => state.mailTemplate.mailTemplate,
+        mailTemplatesFields: state => state.mailTemplate.fields,
         getCommentsByOrigin: ({comment}) => {
             return origin => {
                 let temp = []

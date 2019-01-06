@@ -17,6 +17,8 @@ import StatusTask from "@/components/admin/StatusTask";
 import TaskManager from "@/components/work-area/TaskManager";
 import ContactCard from "@/components/work-area/ContactCard";
 import StatusComment from "@/components/admin/StatusComment";
+import WorkArea from "@/components/work-area/WorkArea";
+import MailTemplate from "@/components/admin/MailTemplate";
 
 Vue.use(Router)
 
@@ -105,9 +107,14 @@ export default new Router({
             component: TypeAdd
         },
         {
-            path: '/work-area/task-manager/',
-            name: 'task-manager',
-            component: TaskManager
+            path: '/admin/mail-template/',
+            name: 'mail-template-admin',
+            component: MailTemplate
+        },
+        {
+            path: '/work-area/',
+            name: 'work-area',
+            component: WorkArea
         },
 
     ]

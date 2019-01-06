@@ -23,8 +23,10 @@
           <el-menu-item index="/admin/status-contact/">Управление статусами контактов</el-menu-item>
           <el-menu-item index="/admin/status-task/">Управление статусами задач</el-menu-item>
           <el-menu-item index="/admin/status-comment/">Управление статусами комментариев</el-menu-item>
+          <el-menu-item index="/admin/mail-template/">Управление шаблонами для рассылок</el-menu-item>
         </el-submenu>
         <el-menu-item index="/sender/">Рассылки</el-menu-item>
+        <el-menu-item index="/work-area/">Рабочая область</el-menu-item>
         <el-menu-item index="/logout/">Выйти ({{ username }}) </el-menu-item>
       </el-menu>
       <div class="line"></div>
@@ -64,7 +66,7 @@
                 // spinner: 'el-icon-loading',
             })
             let arEnt = ['eduType', 'edu', 'contact',  'statusContact', 'statusTask',
-                'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment']
+                'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment', 'mailTemplate']
             this.$socket.emit('init', {ent: arEnt}) // загружаем данные
             this.sockets.subscribe('inited', (data) => {
                 this.$store.dispatch('updateFields').then(() => loading.close())

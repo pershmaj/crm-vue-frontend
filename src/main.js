@@ -19,7 +19,8 @@ import AsyncComputed from 'vue-async-computed'
 // Vue.use(Vuetify)
 Vue.use(new VueSocketIO({
     debug: true,
-    connection: 'http://crmback.na4u.ru',
+    connection: 'http://localhost:3000/',
+    // connection: 'http://crmback.na4u.ru',
     vuex: {
         store,
         actionPrefix: 'socket_',

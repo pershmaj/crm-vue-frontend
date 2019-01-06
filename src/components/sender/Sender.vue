@@ -1,101 +1,66 @@
 <template>
     <div id="sender">
-        <el-table v-loading="false" ref="multipleTable" :data="data" style="width: 100%"
-            @select-all="handleSelectAll" @selection-change="handleSelectionChanged"   >
-            <el-table-column
-                    type="selection"
-                    width="55">
-            </el-table-column>
-            <el-table-column property="surname" label="Фамилия" ></el-table-column>
-            <el-table-column property="name" label="Имя" ></el-table-column>
-            <el-table-column property="patro" label="Отчество" ></el-table-column>
-            <el-table-column property="phone" label="Телефон" ></el-table-column>
-            <el-table-column property="email" label="Email" ></el-table-column>
-            <el-table-column property="level" label="Класс" ></el-table-column>
-            <el-table-column property="address" label="Адрес" ></el-table-column>
-        </el-table>
-        <el-row style="margin-top: 20px">
-            <el-col :span="2" :offset="9">Email</el-col>
-            <el-col :span="4" ><el-button v-show="!this.addressbookId" @click="sendEmail">Добавить адреса</el-button></el-col>
-            <el-col :span="4" ><el-button type="danger" v-show="this.addressbookId" @click="startCampaign">Отправить письма</el-button></el-col>
-        </el-row>
-        <!--<el-row style="margin-top: 20px">-->
-            <!--<el-button  @click="sendEmail">Добавить адреса</el-button>-->
-            <!--<el-button  @click="startCampaign">Отправить письма</el-button>-->
-        <!--</el-row>-->
+        <v-stepper v-model="stepper">
+            <v-stepper-header>
+                <v-stepper-step :complete="stepper > 1" step="1">Выбор контактов</v-stepper-step>
+                <v-divider></v-divider>
+                <v-stepper-step :complete="stepper > 2" step="2">Выбор типа рассылки</v-stepper-step>
+                <v-divider></v-divider>
+                <v-stepper-step :complete="stepper > 3" step="3">Подтверждение контактов</v-stepper-step>
+                <v-divider></v-divider>
+                <v-stepper-step step="4">Выбор шаблона и рассылка</v-stepper-step>
+            </v-stepper-header>
+
+            <v-stepper-items>
+                <v-stepper-content step="1">
+                    <contact-picker-table @selectionChanged="handleSelectionChanged"></contact-picker-table>
+                    <v-btn color="primary" @click="stepper=2">Далее</v-btn>
+                </v-stepper-content>
+                <v-stepper-content step="2">
+                    <!--выбор типа рассылки-->
+                    <v-btn color="primary" @click="stepper=3">Далее</v-btn>
+                </v-stepper-content>
+                <v-stepper-content step="3">
+                    <!--подтверждение контактов-->
+                    <v-btn color="primary" @click="stepper=4">Далее</v-btn>
+                </v-stepper-content>
+                <v-stepper-content step="4">
+                    <!--выбор шаблона и рассылка-->
+                    <mail-template-picker @pickedtemplate="handlePickedTemplate"></mail-template-picker>
+                    <v-btn color="primary" @click="">Отправить</v-btn>
+                </v-stepper-content>
+
+            </v-stepper-items>
+        </v-stepper>
+
+
     </div>
 </template>
 
 <script>
-    import {http} from "@/api/common";
+    import ContactPickerTable from "@/components/admin/ContactPickerTable";
+    import MailTemplatePicker from "@/components/sender/MailTemplatePicker";
 
     export default {
         name: "Sender",
+        components: {MailTemplatePicker, ContactPickerTable},
         data() {
             return {
-                data: [],
+                stepper: 0,
                 selection: [],
-                forSend: [],
-                loading:true,
-                addressbookId: "",
-                readyForSend: false,
-                fields: {
-                    surname: {label: "Фамилия", type: 'string'},
-                    name: { label: "Имя", type: 'string',},
-                    patro: {label: "Отчество", type: 'string'},
-                    level: {label: "Класс", type: 'integer'},
-                    phone: {label: "Телефон", type: 'string', tableHidden:true},
-                    email: {label: "Почта", type: 'string', tableHidden:true},
-                    vk: {label: "ВК", type: 'string'},
-                }
+                template: "",
             }
         },
         created() {
-            http.get('/contacts-original/').then(({data}) => {
-                this.data = data
-                this.loading = false
-            })
+
         },
         methods:{
-            handleSelectAll(){},
-            handleSelectionChanged(selection) {
-                this.selection = selection
+            handleSelectionChanged(selected){
+                this.selection = selected
             },
-            sendEmail(){
-                this.forSend = [];
-                if(this.selection.length>0){
-                    this.selection.forEach(({id, email, name, surname}) => {
-                        this.forSend.push({email: email, variables: {
-                                name: name + ' ' + surname,
-                                // for more variables
-                            }
-                        })
-                    })
-                    http.post('/send-emails/', this.forSend).then((result) => {
-                        this.addressbookId = result.data
-                        console.log(result)
-                    }).catch((error) => {
-                        console.log(error)
-                    })
-                } else {
-                    this.$alert('Вы никого не выбрали')
-                }
-            },
-            getAddressboolAviable(){
-
-            },
-            startCampaign(){
-                http.post('/get-addressbook-aviable/', {addressbookId: this.addressbookId}).then(({data}) => {
-                    data = data[0]
-                    if(data.status == 0){
-                        http.post('/start-campaign/', {emails: this.forSend, addressbookId: this.addressbookId}).then(({he}) => {
-                            console.log('good', he)
-                        })
-                    } else {
-                        this.$alert(data.status_explain)
-                    }
-                })
-            },
+            handlePickedTemplate(selected){
+                this.template = selected
+            }
         }
     }
 </script>
