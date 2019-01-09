@@ -3,8 +3,8 @@
         <el-col :span="8" :offset="8">
             <el-form>
                 <h5 style="color:red">{{error}}</h5>
-                <el-input type="text" name="username" v-model="username"></el-input>
-                <el-input type="password" name="password" v-model="password"></el-input>
+                <el-input type="text" name="username" @keyup.native.enter="auth" v-model="username"></el-input>
+                <el-input type="password" name="password" @keyup.native.enter="auth" v-model="password"></el-input>
                 <el-button round class="primary" @click="auth">Войти</el-button>
             </el-form>
         </el-col>
@@ -28,13 +28,17 @@
         },
         methods: {
             auth() {
-                http.post('http://crmback.na4u.ru/auth/', {username: this.username, password: this.password})
+                http.post('/auth/', {username: this.username, password: this.password})
                     .then(({data}) => {
                     if(!data.failed){
                         this.$session.set('username', data.username)
                         this.$session.set('id', data._id)
                         this.$session.set('nasyanika', data.is_staff)
-                        this.$router.push('/')
+                        if(data.is_staff){
+                            this.$router.push('/')
+                        } else {
+                            this.$router.push('/work-area/')
+                        }
                     } else {
                         this.error = "Неверный логин или пароль"
                     }

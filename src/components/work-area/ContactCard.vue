@@ -1,8 +1,9 @@
 <template>
-    <v-container grid-list-md text-xs-center id="contact-card">
+    <v-container grid-list-md text-xs-center fluid id="contact-card">
         <v-layout row wrap>
-            <v-flex :key="61" xs6>
-                <v-card>
+            <v-flex :key="61" xs8>
+                <!--status_id if first fields in use-->
+                <v-card v-if="relatedContact.status_id">
                     <!--contact-->
                     <v-card-title
                             class="card-title"
@@ -66,17 +67,19 @@
                                 <v-card-title> {{relatedContact.event_ids.name}}</v-card-title>
                                 <v-card-text> {{relatedContact.event_ids.label}}</v-card-text>
                             </v-card>
-
-
                         </v-layout>
                     </v-card-text>
                 </v-card>
             </v-flex>
-            <v-flex :key="62" xs6>
+            <v-flex :key="62" xs4>
                 <v-card>
                     <!--contact history-->
-                    Contact History
+                    <v-card-title>
+                        История контакта
+                        <v-btn v-if="taskMode">Закончить работать с контактом</v-btn>
+                    </v-card-title>
                 </v-card>
+
             </v-flex>
         </v-layout>
     </v-container>
@@ -84,14 +87,15 @@
 
 <script>
     //todo: карточка контакта как универсальный блок, на вход принимает origin
+    import Fields from '@/fields'
     export default {
         name: "ContactCard",
-        // props: ['contactId'],
         data() {
             return {
                 contact: {},
                 origin: this.$route.params.contactId,
                 relatedContact: {},
+                taskMode: false,
             }
         },
         computed: {
@@ -100,39 +104,75 @@
                 return date.getDay()+"."+(parseInt(date.getMonth())+1)+"."+date.getFullYear()
             }
         },
-        created() {
-            this.contact = this.$store.getters.getContactByOrigin(this.origin)
-            let fields = this.$store.getters.allContactsFields
-            for (let field in fields) {
-                if (this.contact.hasOwnProperty(field)) {
-                    this.relatedContact[field] = {}
-                    if (fields[field].hasOwnProperty('options')) {
-                        if (fields[field].hasOwnProperty('multiple')) {
-                            this.relatedContact[field].name = fields[field].label
-                            for (let i = 0; i < fields[field].options.length; i++) {
-                                for (let j = 0; j < this.contact[field].length; j++) {
-                                    if (fields[field].options[i].value === this.contact[field][j]) {
-                                        this.relatedContact[field].label += " " + fields[field].options[i].label
-                                        break
+        asyncComputed: {
+            relatedContact: {
+                get() {
+                    this.contact = this.$store.getters.getContactByOrigin(this.origin)
+                    let relatedContact = {}
+                    let fields = this.$store.getters.allContactsFields
+                    for (let field in fields) { //заполняем структуру
+                        relatedContact[field] = {} //обязательная инициализация структуры в поле
+                        if (this.contact.hasOwnProperty(field)) { // если поле у контакта, то добавлем, иначе пустое
+                            if (fields[field].hasOwnProperty('options')) { // если это ключ с опциями
+                                if (fields[field].hasOwnProperty('multiple')) { // если множественное
+                                    relatedContact[field].name = fields[field].label
+                                    for (let i = 0; i < fields[field].options.length; i++) {
+                                        for (let j = 0; j < this.contact[field].length; j++) {
+                                            if (fields[field].options[i].value === this.contact[field][j]) {
+                                                relatedContact[field].label += " " + fields[field].options[i].label
+                                                break
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    for (let i = 0; i < fields[field].options.length; i++) {
+                                        if (fields[field].options[i].value === this.contact[field]) {
+                                            relatedContact[field].label = fields[field].options[i].label
+                                            relatedContact[field].name = fields[field].label
+                                            break
+                                        }
                                     }
                                 }
+                            } else {
+                                if(this.contact[field])relatedContact[field].label = this.contact[field]
+                                else relatedContact[field].label = ""
+                                relatedContact[field].name = fields[field].label
                             }
                         } else {
-                            for (let i = 0; i < fields[field].options.length; i++) {
-                                if (fields[field].options[i].value === this.contact[field]) {
-                                    this.relatedContact[field].label = fields[field].options[i].label
-                                    this.relatedContact[field].name = fields[field].label
-                                    break
-                                }
-                            }
+                            relatedContact[field].label = ""
+                            relatedContact[field].name = fields[field].label
                         }
-                    } else {
-                        this.relatedContact[field].label = this.contact[field]
-                        this.relatedContact[field].name = fields[field].label
                     }
-                }
+                    return relatedContact
+                },
+                default() {
+                    let contact = {}
+                    for (let field in Fields.contact){
+                        contact[field] = {}
+                        contact[field].label = Fields.contact[field].label
+                        contact[field].name = Fields.contact[field].label
+                    }
+                    return contact
+                },
             }
         },
+        created(){
+            if(this.$route.params.taskId) {
+                this.taskMode = true
+                window.addEventListener('beforeunload', this.removeBlock) //todo: clean listner
+            }
+
+        },
+        beforeDestroy(){
+            this.removeBlock()
+        },
+        methods: {
+            removeBlock(){
+                this.contact.blocked = {}
+                this.$socket.emit('update', {ent: 'contact', data: this.contact})
+            }
+        }
+
     }
 </script>
 
@@ -140,18 +180,17 @@
     #contact-card {
         font-size: 20px;
     }
-
     .card-title {
         border-radius: 10px;
-        background-color: #1bab1b;
+        background-color: #4fa953;
         color: white;
-        width: 80%;
+        width: 90%;
         margin: auto;
         position: relative;
         top: -20px;
         /*padding-left: 10px;*/
+        box-shadow: 0 0 10px #7d7d7d ;
     }
-
     .card-el {
         width: 100%;
         margin: 10px;

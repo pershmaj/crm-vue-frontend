@@ -17,6 +17,8 @@
 <script>
     import {http} from '@/api/common'
     import Crud from '@/components/Crud'
+    import hash from 'object-hash'
+
 
     export default {
         name: 'Contact',
@@ -84,9 +86,9 @@
                 this.form.datetime = new Date()
                 this.form.user_id = this.$session.get('id')
                 if (status === 0) {//create action
-                    this.form.origin = this.getRandom()
+                    this.form.origin = hash(Date.now())
                 } else { // занулить, если обновление, иначе дубликат ключей в монго
-                    this.form._id = null
+                    this.form._id = null // todo: check for real
                 }
                 // переписать "" на null иначе джанга ругаться, ржомба
                 for (let prop in this.form) {

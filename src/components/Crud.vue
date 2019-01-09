@@ -84,11 +84,6 @@
                      <!--селектор выбора контактов для создания / обновления задачи-->
                     <div v-else-if="fields[key].multiple && fields[key].ent === 'contact'">
                         <contact-picker-table @selectionChanged="handleContactPickerSelectionChanged" ></contact-picker-table>
-                        <!--<el-dialog title="Outer Dialog" :visible.sync="showContactPickerModal" append-to-body >-->
-                            <!--<div slot="footer" class="dialog-footer">-->
-                                <!--<el-button type="primary" @click="showContactPickerModal = false">Close</el-button>-->
-                            <!--</div>-->
-                        <!--</el-dialog>-->
                     </div>
 
                     <el-select :disabled="fields[key].disabled" placeholder="" v-else-if="fields[key].multiple" multiple v-model="form[key]" style="width: 100%;" filterable>

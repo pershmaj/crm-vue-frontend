@@ -13,14 +13,16 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueFuse from 'vue-fuse'
 import AsyncComputed from 'vue-async-computed'
+import {http} from '@/api/common'
+import hash from 'object-hash'
 // import Vuetify from 'vuetify'
 // import 'vuetify/dist/vuetify.min.css'
 //
 // Vue.use(Vuetify)
 Vue.use(new VueSocketIO({
-    debug: true,
-    // connection: 'http://localhost:3000/',
-    connection: 'https://crmback.na4u.ru',
+    debug: false,
+    connection: http.defaults.baseURL,
+    // connection: 'https://crmback.na4u.ru',
     vuex: {
         store,
         actionPrefix: 'socket_',

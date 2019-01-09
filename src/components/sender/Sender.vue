@@ -18,7 +18,7 @@
                 </v-stepper-content>
                 <v-stepper-content step="2">
                     <v-layout align-center justify-center row fill-height>
-                        <v-flex xs3 :key="11" ><v-btn @click="sendType('Viber')" class="send-type">Viber</v-btn></v-flex>
+                        <v-flex xs3 :key="11" ><v-btn disabled @click="sendType('Viber')" class="send-type">Viber</v-btn></v-flex>
                         <v-flex xs3 :key="12" ><v-btn @click="sendType('Email')" class="send-type">Email</v-btn></v-flex>
                     </v-layout>
                 </v-stepper-content>
@@ -27,7 +27,7 @@
                         <v-flex xs12 ><h3>Рассылка будет следующим контактам</h3></v-flex>
                         <v-flex v-if="forSend.length>0" xs12 class="contact-list">
                             <v-flex xs10>
-                                <v-layout class="contact-item" row  v-for="item in forSend" justify-space-between>
+                                <v-layout class="contact-item" row  v-for="(item, index) in forSend" :key="index" justify-space-between>
                                     <v-flex class="contact-field" xs3 :key="11">{{item.surname}}</v-flex>
                                     <v-flex class="contact-field" xs3 :key="12">{{item.name}}</v-flex>
                                     <v-flex class="contact-field" xs3 :key="13">{{item.patro}}</v-flex>
@@ -69,6 +69,7 @@
                 template: "",
                 type: "",
                 forSend: [],
+                subject: "Проверка API",//todo: integrate subject to interface
             }
         },
         created() {
@@ -100,7 +101,10 @@
                 this.stepper = 3
             },
             sendAction(){
-                this.$socket.emit('start_send', {emails: this.forSend, template: this.template})
+                console.log('clicked')
+                //todo: add button to add emails to addressbook
+                this.$socket.emit('start_send', {emails: this.forSend, template: this.template,
+                subject: this.subject, })
             }
         }
     }

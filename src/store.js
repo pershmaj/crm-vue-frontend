@@ -60,7 +60,9 @@ export default new Vuex.Store({
             // создаем карту
             let set = new Map()
             //переворачиваем массив и закидываем только уникальные контакты последней версии
-            contact.contact.reverse().forEach((item) => {
+            contact.contact.sort((a, b) => {
+                return new Date(a.datetime).getTime() < new Date(b.datetime).getTime() ? 1 : -1
+            }).forEach((item) => {
                 if (!set.has(item.origin)) {
                     set.set(item.origin, item)
                 }
@@ -105,7 +107,11 @@ export default new Vuex.Store({
         },
         getContactByOrigin: ({contact}) => {
             return origin => {
-                return contact.contact.reverse().find((item) => {
+
+                return contact.contact.sort((a, b) => {
+                    return new Date(a.datetime).getTime() < new Date(b.datetime).getTime() ? 1 : -1
+                }).find((item) => {
+                    console.log(item.origin, origin)
                     return item.origin === origin
                 })
             }
@@ -136,6 +142,7 @@ export default new Vuex.Store({
             let index = state[data.ent][data.ent].findIndex((item, index) => {
                 return item._id === data.data._id
             })
+            console.log(data)
             state[data.ent][data.ent].splice(index, 1, data.data)
         },
         SET_FIELDS: (state, data) => {

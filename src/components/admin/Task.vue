@@ -5,7 +5,8 @@
               :count="this.$store.getters.tasks.length"
               :form="form"
               v-loading="false"
-              @create="handleCreate" @update="handleUpdate" @destroy="handleDestroy" @submit="handleSubmit"
+              @create="handleCreate" @update="handleUpdate" @destroy="handleDestroy"
+              @submit="handleSubmit" @close="handleCloseDialog"
         ></crud>
     </div>
 </template>
@@ -29,7 +30,11 @@
             this.dataInit()
         },
         methods: {
-            handleCreate() {},
+            handleCloseDialog(){
+                this.form={}
+            },
+            handleCreate() {
+            },
             handleUpdate (row, index) {
                 this.form = { ...row}
             },

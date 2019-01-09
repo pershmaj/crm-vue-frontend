@@ -38,7 +38,7 @@
       </el-main>
     </el-container>
 
-
+    <!--todo: всплывающее окно при добавлении чего-либо-->
   </el-container>
 </template>
 
@@ -68,7 +68,7 @@
             let arEnt = ['eduType', 'edu', 'contact',  'statusContact', 'statusTask',
                 'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment', 'mailTemplate']
             this.$socket.emit('init', {ent: arEnt}) // загружаем данные
-            this.sockets.subscribe('inited', (data) => {
+            this.sockets.subscribe('inited', (data) => {//todo добавить аутентификацию на сокет
                 this.$store.dispatch('updateFields').then(() => loading.close())
                 this.sockets.unsubscribe('inited')
             })
