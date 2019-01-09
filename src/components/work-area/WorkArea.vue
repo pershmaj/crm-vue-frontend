@@ -39,16 +39,24 @@
                     let pushed = false
                     contact_ids.forEach((item) => {
                         let contact = this.$store.getters.getContactByOrigin(item)
-                        console.log(contact)
-                        if(contact!== undefined) {
-                            console.log(contact)
-                            if(!contact.hasOwnProperty('blocked') || pushed) contact.blocked = {}
+                        if(contact!== undefined && !pushed) {
+                            if(!contact.hasOwnProperty('blocked')) contact.blocked = {}
                             if(!contact.blocked.hasOwnProperty('task_id')) { //если не заблочен
+                                if(contact.tasks){
+                                    // выкидываем если есть хоть какая-то запись с этим заданием
+                                    let contactTask =  contact.tasks.find((item) => {
+                                        return item.task_id === task._id
+                                    })
+                                    console.log(contactTask)
+                                    if(contactTask && contactTask.hasOwnProperty('done') && contactTask.done){ // закончено
+                                        return
+                                    }
+                                }
                                 // todo: переписать блокировку на поиск при инициализации
-                                console.log(contact.name)
                                 contact.blocked = {user_id: this.$session.get('id'), task_id: task._id, datetime: new Date()}
                                 this.$socket.emit('update', {ent: 'contact', data: contact})
-                                this.$router.push({name: 'contact-admin-detail', params: { contactId: contact_ids[0], taskId: task._id }})
+                                console.log('blocked')
+                                this.$router.push({name: 'contact-admin-detail', params: { contactId: contact.origin, taskId: task._id }})
                                 pushed = true
                             }
                         }

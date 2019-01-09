@@ -72,14 +72,36 @@
                 </v-card>
             </v-flex>
             <v-flex :key="62" xs4>
-                <v-card>
-                    <!--contact history-->
-                    <v-card-title>
-                        История контакта
-                        <v-btn v-if="taskMode">Закончить работать с контактом</v-btn>
-                    </v-card-title>
-                </v-card>
-
+                <v-layout wrap>
+                    <v-flex xs12>
+                        <v-card>
+                            <!--contact history-->
+                            <v-card-title>
+                                История контакта
+                                <!--todo: скрывание кнопки не реактивно-->
+                            </v-card-title>
+                            <v-card-text v-show="taskMode && commentExists"><v-btn  @click="endWorkWithContact">Закончить работать с контактом</v-btn></v-card-text>
+                        </v-card>
+                    </v-flex>
+                    <v-flex xs12 v-if="taskMode">
+                        <v-card>
+                            <!--contact history-->
+                            <v-card-text>
+                                <el-input v-model="newComment.comments[0].comment" type="textarea"/>
+                                <el-select v-model="newComment.comments[0].status_id">
+                                    <el-option v-for="(opt, key) in commentStatuses" :key="key" :label="opt.label" :value="opt.value"></el-option>
+                                </el-select>
+                                <v-btn @click="addComment" >Добавить комментарий</v-btn>
+                            </v-card-text>
+                        </v-card>
+                    </v-flex>
+                    <v-flex xs12 v-for="(comment, index) in comments" :key="index">
+                        <v-card>
+                            <v-card-title>{{comment.user_id+ " "+ comment.status_id}}</v-card-title>
+                            <v-card-text>{{comment.comment}} {{comment.datetime}}</v-card-text>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
             </v-flex>
         </v-layout>
     </v-container>
@@ -92,10 +114,22 @@
         name: "ContactCard",
         data() {
             return {
+                listener: {},
                 contact: {},
                 origin: this.$route.params.contactId,
                 relatedContact: {},
                 taskMode: false,
+                newComment: {
+                    task_id: this.$route.params.taskId,
+                    done: false,
+                    comments:[{
+                        user_id: this.$session.get('id'),
+                        status_id: "", //fill
+                        comment: "", //fill
+                        datetime: "",
+                    }],
+
+                }
             }
         },
         computed: {
@@ -105,6 +139,16 @@
             }
         },
         asyncComputed: {
+            commentStatuses: {
+                get() {
+                    let statuses = []
+                    this.$store.getters.statusesComment.forEach((item) => {
+                        statuses.push({label: item.name, value: item._id})
+                    })
+                    return statuses
+                },
+                default: []
+            },
             relatedContact: {
                 get() {
                     this.contact = this.$store.getters.getContactByOrigin(this.origin)
@@ -154,12 +198,42 @@
                     }
                     return contact
                 },
+            },
+            comments: {
+                get() {
+                    // let comments = this.contact.tasks
+                    let comments = []
+                    if(this.$store.getters.getContactByOrigin(this.origin).hasOwnProperty('tasks')
+                        && Array.isArray(this.$store.getters.getContactByOrigin(this.origin).tasks)){
+                        this.$store.getters.getContactByOrigin(this.origin).tasks.forEach((task) => {
+                            if(task.hasOwnProperty('comments'))
+                                task.comments.forEach((comment) => {
+                                    comments.push(comment)
+                                })
+                        })
+                    }
+                    return comments.sort((a, b) => {
+                        return new Date(a.datetime).getTime() < new Date(b.datetime).getTime() ? 1 : -1
+                    })
+                },
+                default: []
+            },
+            commentExists: {
+                get(){
+                    let temp = this.contact.tasks.find((item) => {
+                        return item.task_id === this.$route.params.taskId
+                    })
+                    console.log(temp)
+                    return temp
+                },
+                default: false,
             }
+
         },
         created(){
             if(this.$route.params.taskId) {
                 this.taskMode = true
-                window.addEventListener('beforeunload', this.removeBlock) //todo: clean listner
+                window.addEventListener('beforeunload', this.removeBlock)
             }
 
         },
@@ -169,6 +243,34 @@
         methods: {
             removeBlock(){
                 this.contact.blocked = {}
+                this.$socket.emit('update', {ent: 'contact', data: this.contact})
+                console.log('block removed')
+                window.removeEventListener('beforeunload', this.removeBlock)
+            },
+            addComment() {
+                this.newComment.comments[0].datetime = Date.now()
+                if(!this.contact.tasks) { //no tasks at all
+                    this.contact.tasks = []
+                    this.contact.tasks.push(this.newComment)
+
+                } else if(this.contact.tasks.length>0){
+                    let temp = this.contact.tasks.find((task, index) => {
+                        if(task.task_id === this.$route.params.taskId){
+                            this.contact.tasks[index].comments.push(this.newComment.comments[0])
+                            return true
+                        }
+                    })
+                    console.log(temp)
+                    if(!temp) {
+                        this.contact.tasks.push(this.newComment)
+                    }
+                }
+                this.$socket.emit('update', {ent: 'contact', data: this.contact})
+            },
+            endWorkWithContact() {
+                this.contact.tasks.find((item) => {
+                    return item.task_id === this.$route.params.taskId
+                }).done = true
                 this.$socket.emit('update', {ent: 'contact', data: this.contact})
             }
         }

@@ -89,12 +89,13 @@ export default new Vuex.Store({
         statusesCommentFields: state => state.statusComment.fields,
         mailTemplates: state => state.mailTemplate.mailTemplate,
         mailTemplatesFields: state => state.mailTemplate.fields,
-        getCommentsByOrigin: ({comment}) => {
-            return origin => {
+        getCommentsByTask: ({contact}) => {
+            return id => {
                 let temp = []
-                comment.comment.forEach((item) => {
-                    if(item.contact_ids === origin) temp.push(item)
-                })
+                if(Array.isArray(contact.contact.tasks))
+                    contact.contact.tasks.forEach((item) => {
+                        if(item.task_id === id) temp.push(item)
+                    })
                 return temp
             }
         },
@@ -111,9 +112,8 @@ export default new Vuex.Store({
                 return contact.contact.sort((a, b) => {
                     return new Date(a.datetime).getTime() < new Date(b.datetime).getTime() ? 1 : -1
                 }).find((item) => {
-                    console.log(item.origin, origin)
                     return item.origin === origin
-                })
+                }) || {}
             }
         },
         getUserById: ({user}) => {
@@ -132,7 +132,6 @@ export default new Vuex.Store({
             state[data.ent][data.ent].push(data.data)
         },
         DELETE: (state, data) => {
-            console.log(data)
             let index = state[data.ent][data.ent].findIndex((item, index) => {
                 return item._id === data.data
             })
@@ -142,7 +141,6 @@ export default new Vuex.Store({
             let index = state[data.ent][data.ent].findIndex((item, index) => {
                 return item._id === data.data._id
             })
-            console.log(data)
             state[data.ent][data.ent].splice(index, 1, data.data)
         },
         SET_FIELDS: (state, data) => {

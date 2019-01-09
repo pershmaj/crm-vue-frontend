@@ -5,8 +5,9 @@
               :fields="this.$store.getters.allContactsFields"
               :count="count"
               :form="form" v-loading="false"
-              @search="handleSearch"
-              @create="handleCreate" @update="handleUpdate" @destroy="handleDestroy" @submit="handleSubmit"
+              @search="handleSearch" @submit="handleSubmit" @removeBlock="handleRemoveBlock"
+              @create="handleCreate" @update="handleUpdate" @destroy="handleDestroy"
+
               @row-dblclick="handleRowDblclick"
               @sizePerPageChanged="handlerSizePerPageChanged"
               @currentPageChanged="handlerCurrentPageChanged"
@@ -71,6 +72,11 @@
             this.dataInit()
         },
         methods: {
+            handleRemoveBlock(row) {
+                row.blocked = {}
+                console.log(row)
+                this.$socket.emit('update', {ent: 'contact', data: row})
+            },
             handleCreate() {
             },
             handleSearch(str) {

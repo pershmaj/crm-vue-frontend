@@ -1,15 +1,18 @@
 <template>
     <div class="crud">
-        <el-row>
-            <el-col :span="4">
+        <v-layout>
+            <v-flex xs6>
                 <el-input  v-model="searchStr" @keyup.native="search" clearable placeholder="Поиск"></el-input>
-            </el-col>
-            <el-col :span="3" :offset="21">
+            </v-flex>
+
+            <v-flex xs6>
                 <div class="crud__ctrl" v-if="actions.includes('create')">
                     <el-button type="primary" @click="create" size="small" icon="el-icon-plus">Create</el-button>
                 </div>
-            </el-col>
-        </el-row>
+            </v-flex>
+        </v-layout>
+
+
 
         <el-table :data="data" stripe :border="border || undefined" :row-style="rowStyle || undefined" :highlight-current-row="highlightCurrentRow"
                   @expand="handleExpand" @row-click="handleRowClick" @row-dblclick="handleRowDblclick">
@@ -55,6 +58,7 @@
                 <template slot-scope="scope">
                     <el-button v-if="actions.includes('update')" type="warning" size="small" @click.stop="update(scope.row, scope.$index)">Изменить</el-button>
                     <el-button v-if="actions.includes('destroy')" type="danger" size="small" @click.stop="destroy(scope.row, scope.$index)">Удалить</el-button>
+                    <el-button v-if="scope.row.blocked && scope.row.blocked.task_id" type="info" size="small" @click.stop="removeBlock(scope.row, scope.$index)">Разблокировать</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -199,6 +203,9 @@
         },
         methods: {
             doNothing() {},
+            removeBlock(row, index) {
+                this.$emit('removeBlock', row)
+            },
             search() {
                 //todo: передать в компонент строку и вернуть результат поиска
                 this.$emit('search', this.searchStr)
