@@ -4,6 +4,8 @@ import Fields from '@/fields'
 
 Vue.use(Vuex)
 
+const st = {name: 'loading'}
+
 export default new Vuex.Store({
     state: {
         contact: {
@@ -113,14 +115,49 @@ export default new Vuex.Store({
                     return new Date(a.datetime).getTime() < new Date(b.datetime).getTime() ? 1 : -1
                 }).find((item) => {
                     return item.origin === origin
-                }) || {}
+                }) || st
             }
         },
         getUserById: ({user}) => {
             return id => {
                 return user.user.find((item) => {
                     return item._id === id
-                })
+                }) || st
+            }
+        },
+        getStatusCommentById: ({statusComment}) => {
+            return id => {
+                return statusComment.statusComment.find((item) => {
+                    return item._id === id
+                }) || st
+            }
+        },
+        getEduById: ({edu}) => {
+            return id => {
+                return edu.edu.find((item) => {
+                    return item._id === id
+                }) || st
+            }
+        },
+        getTypeById: ({typeAdd}) => {
+            return id => {
+                return typeAdd.typeAdd.find((item) => {
+                    return item._id === id
+                }) || st
+            }
+        },
+        getEventById:({event}) => {
+            return id => {
+                return event.event.find((item) => {
+                    return item._id === id
+                }) || st
+            }
+        },
+        getContactStatusById: ({statusContact}) => {
+            return id => {
+                return statusContact.statusContact.find((item) => {
+                    return item._id === id
+                }) || st
             }
         }
     },
