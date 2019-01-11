@@ -19,6 +19,8 @@ import ContactCard from "@/components/work-area/ContactCard";
 import StatusComment from "@/components/admin/StatusComment";
 import WorkArea from "@/components/work-area/WorkArea";
 import MailTemplate from "@/components/admin/MailTemplate";
+import ImportFile from "@/components/admin/ImportFile";
+import ExportFile from "@/components/admin/ExportFile";
 
 Vue.use(Router)
 
@@ -110,6 +112,16 @@ export default new Router({
             path: '/admin/mail-template/',
             name: 'mail-template-admin',
             component: MailTemplate
+        },
+        {
+            path: '/admin/import-file/',
+            name: 'import-file',
+            component: ImportFile
+        },
+        {
+            path: '/admin/export-file/',
+            name: 'export-file',
+            component: ExportFile
         },
         {
             path: '/work-area/',

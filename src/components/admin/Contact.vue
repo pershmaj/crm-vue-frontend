@@ -16,13 +16,13 @@
 </template>
 
 <script>
-    import {http} from '@/api/common'
     import Crud from '@/components/Crud'
-    import hash from 'object-hash'
+    import {CreateContact} from "@/mixins/CreateContact";
 
 
     export default {
         name: 'Contact',
+        mixins: [CreateContact],
         components: {
             Crud,
         },
@@ -89,20 +89,7 @@
                 this.$socket.emit('delete', {ent: this.ent, data: row._id})
             },
             handleSubmit(status, closeDialog) {
-                this.form.datetime = new Date()
-                this.form.user_id = this.$session.get('id')
-                if (status === 0) {//create action
-                    this.form.origin = hash(Date.now())
-                } else { // занулить, если обновление, иначе дубликат ключей в монго
-                    this.form._id = null // todo: check for real
-                }
-                // переписать "" на null иначе джанга ругаться, ржомба
-                for (let prop in this.form) {
-                    if (this.form[prop] === "") {
-                        this.form[prop] = null
-                    }
-                }
-                this.$socket.emit('add', {ent: this.ent, data: this.form})
+                this.createContact(this.form, status)
                 closeDialog()
             },
             handleRowDblclick(row, index) {

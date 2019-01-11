@@ -1,7 +1,4 @@
 const getContactForWork = {
-    created(){
-        console.log('im everywhere')
-    },
     methods: {
         getContactForWork (task) {
             let contact_ids = task.contact_ids
