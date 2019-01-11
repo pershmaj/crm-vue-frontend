@@ -15,6 +15,7 @@ import VueFuse from 'vue-fuse'
 import AsyncComputed from 'vue-async-computed'
 import {http} from '@/api/common'
 import hash from 'object-hash'
+import {global} from '@/mixins/WorkArea'
 // import Vuetify from 'vuetify'
 // import 'vuetify/dist/vuetify.min.css'
 //

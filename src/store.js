@@ -110,7 +110,6 @@ export default new Vuex.Store({
         },
         getContactByOrigin: ({contact}) => {
             return origin => {
-
                 return contact.contact.sort((a, b) => {
                     return new Date(a.datetime).getTime() < new Date(b.datetime).getTime() ? 1 : -1
                 }).find((item) => {

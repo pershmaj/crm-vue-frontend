@@ -1,7 +1,8 @@
 <template>
     <v-container grid-list-md text-xs-center fluid id="contact-card">
         <v-layout row wrap justify-center>
-            <v-flex v-if="taskMode" class="task-notify" xs12>Задача: {{taskNotify}}</v-flex>
+            <v-flex v-if="taskMode" class="task-notify" xs10>Задача: {{taskNotify}}</v-flex>
+            <v-flex v-if="taskMode" xs2><v-btn @click="gotoNext">Следующий</v-btn></v-flex>
             <v-flex :key="61" xs6>
                 <v-card>
                     <!--contact-->
@@ -86,7 +87,6 @@
                                     </v-layout>
                                 </v-card-text>
                             </v-card>
-
                         </v-layout>
                     </v-card-text>
                 </v-card>
@@ -101,7 +101,14 @@
                                 <!--todo: скрывание кнопки не реактивно-->
                             </v-card-title>
                             <v-card-text v-show="taskMode && commentExists">
-                                <v-btn @click="endWorkWithContact">Закончить работать с контактом</v-btn>
+                                <v-btn @click="endWorkWithContact">
+                                    <v-layout wrap>
+                                        <v-flex class="end-btn_up" xs12>Закончить работать с контактом</v-flex>
+                                        <v-flex class="end-btn_down" xs12>
+                                            задача по контакту выполнена, переход к следующему</v-flex>
+                                    </v-layout>
+
+                                </v-btn>
                             </v-card-text>
                         </v-card>
                     </v-flex>
@@ -134,9 +141,11 @@
     import Fields from '@/fields'
     import ContactCardComment from "@/components/work-area/ContactCardComment";
     import datetime from 'node-datetime'
+    import {getContactForWork} from "@/mixins/WorkArea";
 
     export default {
         name: "ContactCard",
+        mixins: [getContactForWork],
         components: {ContactCardComment},
         data() {
             return {
@@ -263,15 +272,6 @@
             this.removeBlock()
         },
         methods: {
-            // commentExists() {
-            //     if(this.contact.tasks){
-            //         for(let i=0;i<this.contact.tasks.length;i++) {
-            //             if(this.contact.tasks[i].task_id === this.$route.params.taskId) {
-            //                 return true
-            //             }
-            //         }
-            //     } return false
-            // },
             removeBlock() {
                 this.contact.blocked = {}
                 this.$socket.emit('update', {ent: 'contact', data: this.contact})
@@ -287,6 +287,8 @@
                         break
                     }
                 }
+                this.getContactForWork(this.$store.getters.getTaskById(this.$route.params.taskId))
+                this.removeBlock()
             },
             addComment() {
                 this.newComment.comments[0].datetime = Date.now()
@@ -306,8 +308,11 @@
                     }
                 }
                 this.$socket.emit('update', {ent: 'contact', data: this.contact})
+            },
+            gotoNext(){
+                this.getContactForWork(this.$store.getters.getTaskById(this.$route.params.taskId))
+                this.removeBlock()
             }
-
         }
     }
 </script>
@@ -345,9 +350,17 @@
         font-size: 70%;
         border-top: #ffecec 1px solid;
     }
-
-
     .task-notify {
         margin-bottom: 30px;
+    }
+    .end-btn_down {
+        font-size:50%;
+        padding-top: 0;
+        position: relative;
+        top: -3px;
+    }
+    .end-btn_up {
+        position: relative;
+        top:7px;
     }
 </style>
