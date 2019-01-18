@@ -1,22 +1,11 @@
 <template>
     <v-layout wrap>
-        <!--<v-flex xs12>-->
-            <!--&lt;!&ndash;action="https://jsonplaceholder.typicode.com/posts/"&ndash;&gt;-->
-            <!--<el-upload-->
-                    <!--drag-->
-                    <!--action=""-->
-                    <!--:on-preview="handlePreview"-->
-                    <!--:remove="handleRemove"-->
-                    <!--:http-request="handleHttpRequest"-->
-                    <!--:file-list="fileList"-->
-                    <!--&gt;-->
-                <!--<i class="el-icon-upload"></i>-->
-                <!--<div class="el-upload__text">Перетащите сюда файл <em>или нажмите дял загрузки</em></div>-->
-                <!--<div class="el-upload__tip" slot="tip">Только файлы с разрешением CSV</div>-->
-            <!--</el-upload>-->
-        <!--</v-flex>-->
         <v-flex xs12>
-            <input ref="file" @change="fileChanged" type="file">
+            Выберите сущность для загрузки
+            <el-select v-model="ent">
+                <el-option v-for="field in fields" :value="field.value" :label="field.label"></el-option>
+            </el-select>
+            <input v-if="ent" ref="file" @change="fileChanged" type="file">
         </v-flex>
         <v-flex xs12>
             {{fileContent}}
@@ -26,38 +15,43 @@
 
 <script>
     import Papa from 'papaparse'
+    import Fields from '@/fields'
 
     export default {
         name: "ImportFile",
         data() {
             return {
+                ent: "",
                 fileContent: ""
+            }
+        },
+        computed:{
+            fields() {
+                let fields = []
+                for(let f in Fields) {
+                    fields.push({value: f, label:f})
+                }
+                return fields
             }
         },
         methods: {
             fileChanged(elem) {
-                console.log('changed!', elem.target.files[0])
                 let fr = new FileReader()
                 fr.onload = (file) => {
                     let fileContent = file.target.result
                     console.log(fileContent)
-                     console.log(Papa.parse(fileContent, {
-                         delimiter: ";",
-                         newline: "\n",
-                         header: true,
-                     }))
+                    this.fileContent = Papa.parse(fileContent, {
+                        delimiter: ";",
+                        newline: "\n",
+                        header: true,
+                    }).data
+                    // this.parseData(this.fileContent)
                 }
-                fr.readAsText(elem.target.files[0], )
+                fr.readAsText(elem.target.files[0],)
             },
-            handleHttpRequest() {
-                return true
-            },
-            handleRemove(file, fileList){
-                console.log('he', fileList)
-            },
-            handlePreview(){
+            parseData(data) {
 
-            },
+            }
         }
     }
 </script>

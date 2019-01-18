@@ -31,6 +31,7 @@
                 http.post('/auth/', {username: this.username, password: this.password})
                     .then(({data}) => {
                     if(!data.failed){
+                        // this.$cookie.set
                         this.$session.set('username', data.username)
                         this.$session.set('id', data._id)
                         this.$session.set('nasyanika', data.is_staff)

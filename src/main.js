@@ -16,6 +16,7 @@ import AsyncComputed from 'vue-async-computed'
 import {http} from '@/api/common'
 import hash from 'object-hash'
 import {global} from '@/mixins/WorkArea'
+// var VueCookie2 = require('vue-cookie2')
 // import Vuetify from 'vuetify'
 // import 'vuetify/dist/vuetify.min.css'
 //
@@ -29,6 +30,7 @@ Vue.use(new VueSocketIO({
         actionPrefix: 'socket_',
     }
 }))
+// Vue.use(VueCookie2)
 Vue.use(AsyncComputed)
 Vue.use(VueFuse)
 Vue.use(VueSession)

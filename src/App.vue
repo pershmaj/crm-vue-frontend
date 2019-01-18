@@ -63,18 +63,7 @@
             if (this.getAuth()) {
                 this.$router.push('/')
             }
-            let loading = this.$loading({
-                lock: true,
-                text: 'Загрузка данных',
-                // spinner: 'el-icon-loading',
-            })
-            let arEnt = ['eduType', 'edu', 'contact', 'statusContact', 'statusTask',
-                'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment', 'mailTemplate']
-            this.$socket.emit('init', {ent: arEnt}) // загружаем данные
-            this.sockets.subscribe('inited', (data) => {//todo добавить аутентификацию на сокет
-                this.$store.dispatch('updateFields').then(() => loading.close())
-                this.sockets.unsubscribe('inited')
-            })
+            this.loadData()
         },
         beforeUpdate() {
             this.getAuth()
@@ -95,10 +84,22 @@
                     this.$router.push('/login/')
                     return false
                 } else if (this.$session.get('token')) {
-                    console.log('have token')
                     http.defaults.headers.common['Authorization'] = "Token " + this.$session.get('token')
                     return true
                 }
+            },
+            loadData() {
+                let loading = this.$loading({
+                    lock: true,
+                    text: 'Загрузка данных',
+                })
+                let arEnt = ['eduType', 'edu', 'contact', 'statusContact', 'statusTask',
+                    'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment', 'mailTemplate']
+                this.$socket.emit('init', {ent: arEnt}) // загружаем данные
+                this.sockets.subscribe('inited', (data) => {//todo добавить аутентификацию на сокет
+                    this.$store.dispatch('updateFields').then(() => loading.close())
+                    this.sockets.unsubscribe('inited')
+                })
             }
         }
     }
