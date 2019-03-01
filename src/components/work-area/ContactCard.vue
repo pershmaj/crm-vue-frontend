@@ -98,7 +98,6 @@
                             <!--contact history-->
                             <v-card-title>
                                 История контакта
-                                <!--todo: скрывание кнопки не реактивно-->
                             </v-card-title>
                             <v-card-text v-show="taskMode && commentExists">
                                 <v-btn @click="endWorkWithContact">
@@ -121,7 +120,8 @@
                                     <el-option v-for="(opt, key) in commentStatuses" :key="key" :label="opt.label"
                                                :value="opt.value"></el-option>
                                 </el-select>
-                                <v-btn @click="addComment">Добавить комментарий</v-btn>
+                                <v-btn :disabled="!addCommentCheck"
+                                       @click="addComment">Добавить комментарий</v-btn>
                             </v-card-text>
                         </v-card>
                     </v-flex>
@@ -163,6 +163,13 @@
                     }],
                 }
             }
+        },
+        computed: {
+            addCommentCheck() {
+                if(this.newComment.comments[0].comment && this.newComment.comments[0].status_id)
+                    return true
+                else return false
+            },
         },
         asyncComputed: {
             birthday: {
@@ -207,6 +214,7 @@
             events: {
                 get() {
                     let temp = []
+
                     if (this.contact.event_ids) { //i dk why warn on it
                         for (let i = 0; i < this.contact.event_ids.length; i++) {
                             let event = this.$store.getters.getEventById(this.contact.event_ids[i])
@@ -280,7 +288,6 @@
             },
             endWorkWithContact() {
                 for(let i=0;i<this.contact.tasks.length;i++) {
-                    console.log(this.contact.tasks[i].task_id, this.$route.params.taskId)
                     if(this.contact.tasks[i].task_id === this.$route.params.taskId) {
                         this.contact.tasks[i].done = true
                         this.$socket.emit('update', {ent: 'contact', data: this.contact})

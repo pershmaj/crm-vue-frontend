@@ -28,23 +28,25 @@
         },
         methods: {
             auth() {
-                http.post('/auth/', {username: this.username, password: this.password})
-                    .then(({data}) => {
-                    if(!data.failed){
-                        // this.$cookie.set
-                        this.$session.set('username', data.username)
-                        this.$session.set('id', data._id)
-                        this.$session.set('nasyanika', data.is_staff)
-                        if(data.is_staff){
-                            this.$router.push('/')
-                        } else {
-                            this.$router.push('/work-area/')
-                        }
+                 http.post('/auth/', {username: this.username, password: this.password})
+                        .then(this.onAuthResult)
+            },
+            onAuthResult({data}){
+                if (!data.failed) {
+                    console.log('Авторизация успешна')
+                    this.$cookies.set('username', data.username)
+                    this.$cookies.set('id', data._id)
+                    this.$cookies.set('nasyanika', data.is_staff)
+                    this.$cookies.set('token', data.token)
+                    if (data.is_staff) {
+                        this.$router.push('/')
                     } else {
-                        this.error = "Неверный логин или пароль"
+                        this.$router.push('/work-area/')
                     }
-                })
-            }
+                } else {
+                    this.error = "Неверный логин или пароль"
+                }
+            },
         },
     }
 </script>

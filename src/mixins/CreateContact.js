@@ -1,4 +1,4 @@
-import hash from 'object-hash'
+var uniqid = require('uniqid')
 
 const CreateContact = {
     methods: {
@@ -6,7 +6,7 @@ const CreateContact = {
             form.datetime = new Date()
             form.user_id = this.$session.get('id')
             if (status === 0) {//create action
-                form.origin = hash(Date.now())
+                form.origin = uniqid()
             } else { // занулить, если обновление, иначе дубликат ключей в монго
                 form._id = null // todo: check for real
             }

@@ -8,10 +8,10 @@
                     text-color="#fff"
                     active-text-color="#ffd04b"
                     :router="true"
-                    v-show="this.$session.exists()"
+                    v-if="this.$cookies.get('token')"
             >
                 <el-menu-item index="/">Домой</el-menu-item>
-                <el-submenu index="/admin/" v-show="this.$session.get('nasyanika')">
+                <el-submenu index="/admin/" v-if="this.$cookies.get('token')">
                     <template slot="title">Административная часть</template>
                     <el-menu-item index="/admin/contact/">Управление контактами</el-menu-item>
                     <el-menu-item index="/admin/all-contact/">Управление всеми контактами</el-menu-item>
@@ -51,21 +51,23 @@
         name: 'app',
         data() {
             return {
-                year: new Date().getFullYear()
+                year: new Date().getFullYear(),
+                dataLoaded: false,
             }
         },
         computed: {
             username() {
-                return this.$session.get('username')
+                return this.$cookies.get('username')
             }
         },
         created() {
             if (this.getAuth()) {
                 this.$router.push('/')
             }
-            this.loadData()
+
         },
         beforeUpdate() {
+            console.log('im updated')
             this.getAuth()
         },
         methods: {
@@ -79,28 +81,41 @@
                 })
             },
             getAuth() {
-                if (!this.$session.exists()) {
+                if (!this.$cookies.get('token')) {
                     console.log('need login')
                     this.$router.push('/login/')
                     return false
-                } else if (this.$session.get('token')) {
-                    http.defaults.headers.common['Authorization'] = "Token " + this.$session.get('token')
+                } else {
+                    if(!this.dataLoaded) {
+                        this.dataLoaded = true
+                        this.loadData()
+                    }
                     return true
                 }
             },
             loadData() {
-                let loading = this.$loading({
-                    lock: true,
-                    text: 'Загрузка данных',
-                })
-                let arEnt = ['eduType', 'edu', 'contact', 'statusContact', 'statusTask',
-                    'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment', 'mailTemplate']
-                this.$socket.emit('init', {ent: arEnt}) // загружаем данные
-                this.sockets.subscribe('inited', (data) => {//todo добавить аутентификацию на сокет
-                    this.$store.dispatch('updateFields').then(() => loading.close())
-                    this.sockets.unsubscribe('inited')
-                })
-            }
+                if(this.getAuth()){
+                    let loading = this.$loading({
+                        lock: true,
+                        text: 'Загрузка данных',
+                    })
+                    let arEnt = ['eduType', 'edu', 'contact', 'statusContact', 'statusTask',
+                        'typeAdd', 'task', 'event', 'user', 'comment', 'statusComment', 'mailTemplate', 'type']
+                    this.$socket.emit('init', {ent: arEnt, token: this.$cookies.get('token')}) // загружаем данные
+                    this.sockets.subscribe('inited', ({result}) => {
+                        if(!result) {
+                            // token check failed
+                            loading.close()
+                            this.dataLoaded = false
+                            this.$router.push('/login/')
+                        } else {
+                            // all is good
+                            this.$store.dispatch('updateFields').then(() => loading.close())
+                        }
+                        this.sockets.unsubscribe('inited')
+                    })
+                }
+            },
         }
     }
 </script>

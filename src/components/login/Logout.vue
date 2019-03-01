@@ -6,7 +6,9 @@
     export default {
         name: "Logout",
         created(){
-            this.$session.destroy()
+            this.$cookies.keys().forEach((el) => {
+                this.$cookies.remove(el)
+            })
             this.$router.push('/login/')
         }
     }

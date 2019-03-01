@@ -56,6 +56,10 @@ export default new Vuex.Store({
             mailTemplate: [],
             fields: Fields.mailTemplate,
         },
+        type: {
+            type: [],
+            fields: Fields.type,
+        },
     },
     getters: {
         originalContacts: ({contact}) => {
@@ -91,6 +95,8 @@ export default new Vuex.Store({
         statusesCommentFields: state => state.statusComment.fields,
         mailTemplates: state => state.mailTemplate.mailTemplate,
         mailTemplatesFields: state => state.mailTemplate.fields,
+        types: state => state.type.type,
+        typesFields: state => state.type.fields,
         getCommentsByTask: ({contact}) => {
             return id => {
                 let temp = []
@@ -206,19 +212,21 @@ export default new Vuex.Store({
                     if (Fields[ent][ref].options) {
                         let entity = Fields[ent][ref].ent
                         Fields[ent][ref].options = []
-                        this.state[entity][entity].forEach((row) => {
-                            if (ref === 'user_id') {
-                                Fields[ent][ref].options.push({value: row._id, label: row.username})
-                            }
-                            else if (ref === 'contact_ids') {
-                                Fields[ent][ref].options.push({value: row.origin,
-                                    label: row.surname + " " + row.name + " " + row.patro})
-                            }
-                            else {
-                                Fields[ent][ref].options.push({value: row._id, label: row.name})
-                            }
-                        })
-                        context.commit('SET_FIELDS', {ent: ent, data: Fields[ent]})
+                        if(this.state[entity][entity]) {
+                            this.state[entity][entity].forEach((row) => {
+                                if (ref === 'user_id') {
+                                    Fields[ent][ref].options.push({value: row._id, label: row.username})
+                                } else if (ref === 'contact_ids') {
+                                    Fields[ent][ref].options.push({
+                                        value: row.origin,
+                                        label: row.surname + " " + row.name + " " + row.patro
+                                    })
+                                } else {
+                                    Fields[ent][ref].options.push({value: row._id, label: row.name})
+                                }
+                            })
+                            context.commit('SET_FIELDS', {ent: ent, data: Fields[ent]})
+                        }
                     }
                 }
             }

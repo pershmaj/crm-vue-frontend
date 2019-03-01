@@ -19,6 +19,7 @@ var Fields = {
         user_id: {label: 'Добавил', type: 'objectid', options: [], cuHidden: true, ent: 'user'},
         event_ids: {label: 'Мероприятия', type: 'objectid', options: [], multiple: true, ent: 'event'},
         type_id: {label: 'Тип добавления', type: 'objectid', options: [], ent: 'typeAdd'},
+        type: {label: 'Тип контакта', type: 'objectid', options: [], ent: 'type'},
         //system used fields
         // результаты выполнения заданий появляются по мере их добавление
         // контакт участвует в задании ! = контакт имеет какое-то упоминание о задании
@@ -38,8 +39,12 @@ var Fields = {
         //     datetime: "block time",
         // }
     },
+    type: {
+        // _id: { label: "id", type:"objectid",},
+        name: { label: "Название", type: 'String',},
+    },
     edu: {
-        // id: { label: "id", type:"objectid",},
+        // _id: { label: "id", type:"objectid",},
         name: { label: "Название", type: 'String',},
         type_id: { label: 'Тип', type: 'objectid', options: [], ent: 'eduType' },
     },
@@ -56,7 +61,7 @@ var Fields = {
         name: { label: "Название", type: 'String',},
     },
     event: {
-        // id: { label: "id", type:"objectid",},
+        // _id: { label: "id", type:"objectid",},
         name: { label: "Название", type: 'string',},
         date: { label: "Дата", type: 'date',},
     },
@@ -65,7 +70,7 @@ var Fields = {
         name: { label: "Название", type: 'String',},
     },
     task: {
-        // id: { label: "id", type:"objectid",},
+        // _id: { label: "id", type:"objectid",},
         //tableHidden   ---   hide in list
         //cuHidden ---    hide in create/update forms
         //todo: add taskType link to task types

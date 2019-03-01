@@ -56,3 +56,9 @@
         }
     }
 </script>
+
+<style>
+    .el-table .cell.el-tooltip {
+        max-height: 100px;
+    }
+</style>

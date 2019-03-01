@@ -5,6 +5,7 @@ import router from './router'
 import store from './store'
 // import './registerServiceWorker'
 import VueSession from 'vue-session'
+import VueCookies from 'vue-cookies'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/ru-RU'
@@ -14,13 +15,19 @@ import VueAxios from 'vue-axios'
 import VueFuse from 'vue-fuse'
 import AsyncComputed from 'vue-async-computed'
 import {http} from '@/api/common'
-import hash from 'object-hash'
-import {global} from '@/mixins/WorkArea'
-// var VueCookie2 = require('vue-cookie2')
+
 // import Vuetify from 'vuetify'
 // import 'vuetify/dist/vuetify.min.css'
 //
 // Vue.use(Vuetify)
+
+Vue.use(AsyncComputed)
+Vue.use(VueFuse)
+Vue.use(VueSession)
+Vue.use(VueCookies)
+Vue.use(ElementUI, {locale})
+// Vue.use(CRUD)
+Vue.use(VueAxios, axios)
 Vue.use(new VueSocketIO({
     debug: false,
     connection: http.defaults.baseURL,
@@ -30,13 +37,6 @@ Vue.use(new VueSocketIO({
         actionPrefix: 'socket_',
     }
 }))
-// Vue.use(VueCookie2)
-Vue.use(AsyncComputed)
-Vue.use(VueFuse)
-Vue.use(VueSession)
-Vue.use(ElementUI, {locale})
-// Vue.use(CRUD)
-Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false;
 

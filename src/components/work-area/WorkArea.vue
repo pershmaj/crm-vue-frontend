@@ -1,14 +1,8 @@
 <template>
     <div class="work-area">
         <v-layout wrap>
-            <v-flex class="task_item" xs12 v-for="(task, index) in tasks" @click="taskClick(index)" :key="index">
-                <v-card>
-                    <v-card-title>
-                        <v-flex xs6>{{task.name}}</v-flex>
-                        <v-flex xs6>{{task.status_id}}</v-flex>
-                    </v-card-title>
-                    <v-card-text>{{task.message}}</v-card-text>
-                </v-card>
+            <v-flex class="task_item" xs12 v-for="(task, index) in tasks" >
+                <task-card @taskClicked="taskClick" :index="index" :task="task"></task-card>
             </v-flex>
         </v-layout>
     </div>
@@ -16,17 +10,26 @@
 
 <script>
     import {getContactForWork} from '@/mixins/WorkArea'
+    import {IdToName} from "../../mixins/IdToName";
+    import TaskCard from "./TaskCard";
+    import NameToId from "../../mixins/NameToID"
 
     export default {
         name: "WorkArea",
-        mixins: [getContactForWork],
+        components: {TaskCard},
+        mixins: [getContactForWork, IdToName, NameToId],
         asyncComputed: {
             tasks: {
                 get() {
                     let tasks = []
+
                     this.$store.getters.tasks.forEach((item) => {
+                        if(this.taskIsDone(item)) {
+                            item.status_id = this.IdToName('statusTask', 'Выполнена')
+                            return
+                        }
                         item.user_id.forEach((id) => {
-                            if (id === this.$session.get('id')) tasks.push(item)
+                            if (id === this.$cookies.get('id')) tasks.push(item)
                         })
                     })
                     return tasks
@@ -35,8 +38,9 @@
             }
         },
         methods: {
-            taskClick(key) {
-                let task = this.tasks[key]
+            taskClick(index) {
+                console.log(index)
+                let task = this.tasks[index]
                 this.getContactForWork(task) //mixin
             }
         }
@@ -44,6 +48,10 @@
 </script>
 
 <style scoped>
+    .work-area {
+        font-size: 20px;
+    }
+
     .task_item {
         margin-top: 10px;
     }
