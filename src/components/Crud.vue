@@ -129,7 +129,7 @@
 
 <script>
     import TYPES from './fieldType'
-    import ContactPickerTable from "@/components/admin/ContactPickerTable";
+    import ContactPickerTable from "@/components/tables/ContactPickerTable";
     export default {
         components: {ContactPickerTable},
         props: {

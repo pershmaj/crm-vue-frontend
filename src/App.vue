@@ -46,6 +46,7 @@
 
 <script>
     import {http} from "@/api/common";
+    import Fields from '@/fields'
 
     export default {
         name: 'app',
@@ -110,7 +111,10 @@
                             this.$router.push('/login/')
                         } else {
                             // all is good
-                            this.$store.dispatch('updateFields').then(() => loading.close())
+                            this.$store.dispatch('updateFields').then(() => {
+                                console.log(Fields)
+                                loading.close()
+                            })
                         }
                         this.sockets.unsubscribe('inited')
                     })
@@ -122,10 +126,7 @@
 
 <style>
     #app {
-        /*font-family: 'Avenir', Helvetica, Arial, sans-serif;*/
         font-family: 'PT Sans Caption', sans-serif;
-        /*-webkit-font-smoothing: antialiased;*/
-        /*-moz-osx-font-smoothing: grayscale;*/
         text-align: center;
         color: #2c3e50;
     }

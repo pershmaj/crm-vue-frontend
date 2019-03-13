@@ -20,13 +20,12 @@
 </template>
 
 <script>
-    import {IdToName} from "../../mixins/IdToName";
-    import {getContactForWork} from '@/mixins/WorkArea';
+    import {Common} from "@/mixins/Common";
 
     export default {
         name: "TaskCard",
         props: ['task', 'index'],
-        mixins: [IdToName, getContactForWork],
+        mixins: [Common],
         computed: {
             status(){
                 return this.IdToName('statusTask', this.task.status_id)
@@ -52,8 +51,5 @@
     }
     .start {
         background-color: chartreuse;
-    }
-    .list {
-
     }
 </style>

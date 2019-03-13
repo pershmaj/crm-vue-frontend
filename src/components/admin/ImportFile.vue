@@ -35,9 +35,8 @@
             </v-flex>
         </v-flex>
         <v-flex xs12><el-button @click="AddToDatabase" >Залить данные</el-button></v-flex>
-        <v-flex xs12>
-            {{fileContent}}
-            {{arNewEnts}}
+        <v-flex xs12 v-for="(item, index) in arNewEnts" :key="index">
+            {{item}}
         </v-flex>
     </v-layout>
 </template>
@@ -46,11 +45,11 @@
     import Papa from 'papaparse'
     import Fields from '@/fields'
     import * as JsSearch from 'js-search'
-    import {CreateContact} from "@/mixins/CreateContact";
+    import {Common} from "@/mixins/Common";
 
     export default {
         name: "ImportFile",
-        mixins: [CreateContact],
+        mixins: [Common],
         data() {
             return {
                 ent: "contact",
@@ -94,19 +93,20 @@
                             let res
                             if(Fields[this.ent][field].hasOwnProperty('multiple')){
                                 this.currEnt[field] = []
-                                if(item[field].match(this.multiDelimiter)){//
+                                if(item[field].match(this.multiDelimiter)){//проверяем на наличие запятой
+                                    // console.log(item[field])
                                     let arItem = item[field].split(this.multiDelimiter)
                                     arItem.forEach((el) => { //item is a name
-                                        res = this.findIdByName(Fields[this.ent][field].ent, el)
+                                        res = this.findIdByName(Fields[this.ent][field].ent, el.trim())
                                         this.addToCurrEnt(field, res, true)
                                     })
                                 } else {
-                                    console.log(item[field])
+                                    // console.log(item[field])
                                     res = this.findIdByName(Fields[this.ent][field].ent, item[field])
-                                    this.addToCurrEnt(field, res)
+                                    this.addToCurrEnt(field, res, true)
                                 }
                             } else if(Fields[this.ent][field].hasOwnProperty('options')){
-                                res = this.findIdByName(Fields[this.ent][field].ent, item[field])
+                                res = this.findIdByName(Fields[this.ent][field].ent, item[field].trim())
                                 this.addToCurrEnt(field, res)
                             }
                             else {

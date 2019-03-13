@@ -15,6 +15,10 @@ import VueAxios from 'vue-axios'
 import VueFuse from 'vue-fuse'
 import AsyncComputed from 'vue-async-computed'
 import {http} from '@/api/common'
+import BootstrapVue from 'bootstrap-vue'
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // import Vuetify from 'vuetify'
 // import 'vuetify/dist/vuetify.min.css'
@@ -26,6 +30,7 @@ Vue.use(VueFuse)
 Vue.use(VueSession)
 Vue.use(VueCookies)
 Vue.use(ElementUI, {locale})
+Vue.use(BootstrapVue)
 // Vue.use(CRUD)
 Vue.use(VueAxios, axios)
 Vue.use(new VueSocketIO({

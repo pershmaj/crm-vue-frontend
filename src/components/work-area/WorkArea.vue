@@ -9,15 +9,13 @@
 </template>
 
 <script>
-    import {getContactForWork} from '@/mixins/WorkArea'
-    import {IdToName} from "../../mixins/IdToName";
     import TaskCard from "./TaskCard";
-    import NameToId from "../../mixins/NameToID"
+    import {Common} from "@/mixins/Common";
 
     export default {
         name: "WorkArea",
         components: {TaskCard},
-        mixins: [getContactForWork, IdToName, NameToId],
+        mixins: [Common],
         asyncComputed: {
             tasks: {
                 get() {

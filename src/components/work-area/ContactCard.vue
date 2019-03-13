@@ -141,11 +141,11 @@
     import Fields from '@/fields'
     import ContactCardComment from "@/components/work-area/ContactCardComment";
     import datetime from 'node-datetime'
-    import {getContactForWork} from "@/mixins/WorkArea";
+    import {Common} from "@/mixins/Common";
 
     export default {
         name: "ContactCard",
-        mixins: [getContactForWork],
+        mixins: [Common],
         components: {ContactCardComment},
         data() {
             return {
@@ -347,9 +347,6 @@
         padding: 10px;
         /*border-bottom: #ddd 1px solid;*/
         /*padding-bottom: 10px;*/
-    }
-    .card-el-item_up{
-
     }
 
     .card-el-item_down{

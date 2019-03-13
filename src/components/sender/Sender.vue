@@ -13,7 +13,7 @@
 
             <v-stepper-items>
                 <v-stepper-content step="1">
-                    <contact-picker-table @selectionChanged="handleSelectionChanged"></contact-picker-table>
+                    <contact-picker-table :items="contacts" @selectionChanged="handleSelectionChanged"></contact-picker-table>
                     <v-btn @click="checkContacts">Далее</v-btn>
                 </v-stepper-content>
                 <v-stepper-content step="2">
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-    import ContactPickerTable from "@/components/admin/ContactPickerTable";
+    import ContactPickerTable from "@/components/tables/ContactPickerTable";
     import MailTemplatePicker from "@/components/sender/MailTemplatePicker";
 
     export default {
@@ -72,8 +72,10 @@
                 subject: "Проверка API",//todo: integrate subject to interface
             }
         },
-        created() {
-
+        computed: {
+            contacts() {
+                return this.$store.getters.originalContacts
+            }
         },
         methods:{
             handleSelectionChanged(selected){

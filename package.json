@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bootstrap": "^4.3.1",
+    "bootstrap-vue": "^2.0.0-rc.14",
     "element-ui": "^2.4.11",
     "js-search": "^1.4.2",
     "node-datetime": "^2.1.2",
@@ -17,6 +19,7 @@
     "uniqid": "^5.0.3",
     "vue": "^2.5.17",
     "vue-axios": "^2.1.4",
+    "vue-bootstrap4-table": "^1.0.30",
     "vue-cookies": "^1.5.12",
     "vue-crud-x": "^0.1.4",
     "vue-element-crud": "^3.1.6",

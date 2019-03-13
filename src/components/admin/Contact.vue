@@ -17,12 +17,12 @@
 
 <script>
     import Crud from '@/components/Crud'
-    import {CreateContact} from "@/mixins/CreateContact";
+    import {Common} from "@/mixins/Common";
 
 
     export default {
         name: 'Contact',
-        mixins: [CreateContact],
+        mixins: [Common],
         components: {
             Crud,
         },
@@ -94,13 +94,7 @@
             },
             handleRowDblclick(row, index) {
                 // this.form = {...row}
-                console.log(row, index)
                 this.$router.push({name: 'contact-admin-detail', params: { contactId: row.origin }})
-            },
-            getRandom() {
-                var n = Math.floor(Math.random() * 11)
-                var k = Math.floor(Math.random() * 1000000)
-                return String.fromCharCode(n) + k
             },
             dataInit() {
 
